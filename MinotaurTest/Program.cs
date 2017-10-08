@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Minotaur;
+using System.Diagnostics;
 
 namespace MinotaurTest
 {
@@ -11,28 +12,46 @@ namespace MinotaurTest
     {
         static void Main(string[] args)
         {
-            var manager = new EntityComponentManager();
+            var entityManager = new EntityComponentManager();
+            var systemManager = new SystemManager(entityManager);
 
-            var entity = manager.CreateEntity();
-            var entity2 = manager.CreateEntity();
+            systemManager.AddSystem(new TestSystem());
+            systemManager.AddSystem(new TestSystem2());
+            systemManager.AddSystem(new TestSystem3());
 
-            entity.AddComponent(new TestComponent(1));
+            var entity = entityManager.CreateEntity();
+            var entity2 = entityManager.CreateEntity();
+            var entity3 = entityManager.CreateEntity();
 
-            var entities = manager.GetEntities(manager.GetSignature(new List<Type>() { typeof(TestComponent) }));
+            entity.AddComponent(new TestComponent(11));
 
-            entity2.AddComponent(new TestComponent(2));
+            entity2.AddComponent(new TestComponent(21));
+            entity2.AddComponent(new TestComponent2(22));
 
-            entities = manager.GetEntities(manager.GetSignature(new List<Type>() { typeof(TestComponent) }));
+            entity3.AddComponent(new TestComponent(31));
+            entity3.AddComponent(new TestComponent2(32));
+            entity3.AddComponent(new TestComponent3(33));
 
-            var component = entity.GetComponent<TestComponent>();
-            var component2 = entity2.GetComponent<TestComponent>();
+            RunTest(systemManager);
+        }
 
-            entity.RemoveComponent(typeof(TestComponent));
+        private static void RunTest(SystemManager systemManager)
+        {
+            Stopwatch stopWatch = new Stopwatch();
+            stopWatch.Start();
+            for (var i = 0; i < 600000; i++)
+            {
+                systemManager.Update();
+            }
+            stopWatch.Stop();
+            // Get the elapsed time as a TimeSpan value.
+            TimeSpan ts = stopWatch.Elapsed;
 
-            entities = manager.GetEntities(manager.GetSignature(new List<Type>() { typeof(TestComponent) }));
-
-            component2 = entity2.GetComponent<TestComponent>();
-            component = entity.GetComponent<TestComponent>();
+            // Format and display the TimeSpan value.
+            string elapsedTime = String.Format("{0:00}:{1:00}:{2:00}.{3:00}",
+                ts.Hours, ts.Minutes, ts.Seconds,
+                ts.Milliseconds / 10);
+            Console.WriteLine("RunTime " + elapsedTime);
         }
     }
 }

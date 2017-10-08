@@ -9,11 +9,31 @@ namespace MinotaurTest
 {
     public class TestComponent : IComponent
     {
-        public int Sup;
+        public int Val;
 
-        public TestComponent(int sup)
+        public TestComponent(int val)
         {
-            Sup = sup;
+            Val = val;
+        }
+    }
+
+    public class TestComponent2 : IComponent
+    {
+        public int Val;
+
+        public TestComponent2(int val)
+        {
+            Val = val;
+        }
+    }
+
+    public class TestComponent3 : IComponent
+    {
+        public int Val;
+        
+        public TestComponent3(int val)
+        {
+            Val = val;
         }
     }
 }
