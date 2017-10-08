@@ -7,12 +7,12 @@ using Minotaur;
 
 namespace Game1
 {
-    public class PositionComponent : IComponent
+    public class VelocityComponent : IComponent
     {
         public float X;
         public float Y;
 
-        public PositionComponent(float x, float y)
+        public VelocityComponent(float x, float y)
         {
             X = x;
             Y = y;

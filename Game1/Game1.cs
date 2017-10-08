@@ -50,8 +50,13 @@ namespace Game1
             var sprite = Content.Load<Texture2D>("sprite");
 
             var entity = _ecs.CreateEntity();
-            entity.AddComponent(new PositionComponent());
+            entity.AddComponent(new PositionComponent(0, 0));
+            entity.AddComponent(new VelocityComponent(1, 1));
             entity.AddComponent(new TextureComponent(sprite));
+
+            var entity2 = _ecs.CreateEntity();
+            entity2.AddComponent(new PositionComponent(100, 200));
+            entity2.AddComponent(new TextureComponent(sprite));
 
             _sys.AddSystem(new RenderSystem(spriteBatch));
             _sys.AddSystem(new MovementSystem());

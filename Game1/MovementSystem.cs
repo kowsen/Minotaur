@@ -12,13 +12,15 @@ namespace Game1
         public MovementSystem()
         {
             AddComponentConstraint<PositionComponent>();
+            AddComponentConstraint<VelocityComponent>();
         }
 
         public override void Update(TimeSpan time, Entity entity)
         {
             var position = entity.GetComponent<PositionComponent>();
-            position.X += 1;
-            position.Y += 1;
+            var velocity = entity.GetComponent<VelocityComponent>();
+            position.X += velocity.X;
+            position.Y += velocity.Y;
         }
     }
 }
