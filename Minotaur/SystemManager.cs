@@ -21,30 +21,30 @@ namespace Minotaur
             _systems.Add(system);
         }
 
-        public void Update()
+        public void Update(TimeSpan time)
         {
             for (var i = 0; i < _systems.Count; i++)
             {
                 var system = _systems[i];
                 var entities = _ecs.GetEntities(system.Signature);
-                system.Update(entities);
+                system.Update(time, entities);
                 for (var j = 0; j < entities.Count; j++)
                 {
-                    system.Update(entities[j]);
+                    system.Update(time, entities[j]);
                 }
             }
         }
 
-        public void Draw()
+        public void Draw(TimeSpan time)
         {
             for (var i = 0; i < _systems.Count; i++)
             {
                 var system = _systems[i];
                 var entities = _ecs.GetEntities(system.Signature);
-                system.Draw(entities);
+                system.Draw(time, entities);
                 for (var j = 0; j < entities.Count; j++)
                 {
-                    system.Draw(entities[j]);
+                    system.Draw(time, entities[j]);
                 }
             }
         }

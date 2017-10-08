@@ -17,7 +17,7 @@ namespace MinotaurTest
             AddComponentConstraint<TestComponent>();
         }
 
-        public override void Update(Entity entity)
+        public override void Update(TimeSpan time, Entity entity)
         {
             var num = entity.GetComponent<TestComponent>().Val;
             val = num * num;
@@ -39,7 +39,7 @@ namespace MinotaurTest
             AddComponentConstraint<TestComponent2>();
         }
 
-        public override void Update(Entity entity)
+        public override void Update(TimeSpan time, Entity entity)
         {
             var num = entity.GetComponent<TestComponent>().Val;
             var num2 = entity.GetComponent<TestComponent2>().Val;
@@ -63,7 +63,7 @@ namespace MinotaurTest
             AddComponentConstraint<TestComponent3>();
         }
 
-        public override void Update(Entity entity)
+        public override void Update(TimeSpan time, Entity entity)
         {
             var num = entity.GetComponent<TestComponent>().Val;
             var num2 = entity.GetComponent<TestComponent2>().Val;

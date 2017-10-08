@@ -14,22 +14,22 @@ namespace Minotaur
             Types.Add(typeof(T));
         }
 
-        public virtual void Update(Entity entity)
+        public virtual void Update(TimeSpan time, Entity entity)
         {
 
         }
 
-        public virtual void Update(List<Entity> entities)
+        public virtual void Update(TimeSpan time, List<Entity> entities)
         {
 
         }
 
-        public virtual void Draw(Entity entity)
+        public virtual void Draw(TimeSpan time, Entity entity)
         {
 
         }
 
-        public virtual void Draw(List<Entity> entities)
+        public virtual void Draw(TimeSpan time, List<Entity> entities)
         {
 
         }

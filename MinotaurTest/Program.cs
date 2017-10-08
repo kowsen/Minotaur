@@ -41,7 +41,7 @@ namespace MinotaurTest
             stopWatch.Start();
             for (var i = 0; i < 600000; i++)
             {
-                systemManager.Update();
+                systemManager.Update(new TimeSpan());
             }
             stopWatch.Stop();
             // Get the elapsed time as a TimeSpan value.
