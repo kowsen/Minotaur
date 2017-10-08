@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MinotaurTest", "MinotaurTes
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Game1", "Game1\Game1.csproj", "{2FCAEAF1-71AB-48D0-9DA8-EC411E2CBFAA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AndroidMinotaur", "AndroidMinotaur\AndroidMinotaur.csproj", "{822831F6-7A74-4E74-BE5C-B4596C7C6B03}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,12 @@ Global
 		{2FCAEAF1-71AB-48D0-9DA8-EC411E2CBFAA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2FCAEAF1-71AB-48D0-9DA8-EC411E2CBFAA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2FCAEAF1-71AB-48D0-9DA8-EC411E2CBFAA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{822831F6-7A74-4E74-BE5C-B4596C7C6B03}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{822831F6-7A74-4E74-BE5C-B4596C7C6B03}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{822831F6-7A74-4E74-BE5C-B4596C7C6B03}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{822831F6-7A74-4E74-BE5C-B4596C7C6B03}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{822831F6-7A74-4E74-BE5C-B4596C7C6B03}.Release|Any CPU.Build.0 = Release|Any CPU
+		{822831F6-7A74-4E74-BE5C-B4596C7C6B03}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,10 +1,11 @@
-﻿using Microsoft.Xna.Framework;
+using Game1;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Minotaur;
 using System;
 
-namespace Game1
+namespace AndroidMinotaur
 {
     /// <summary>
     /// This is the main type for your game.
@@ -16,11 +17,17 @@ namespace Game1
 
         EntityComponentManager _ecs;
         SystemManager _sys;
-        
+
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
+
+            graphics.IsFullScreen = true;
+            graphics.PreferredBackBufferWidth = 800;
+            graphics.PreferredBackBufferHeight = 480;
+            graphics.SupportedOrientations = DisplayOrientation.LandscapeLeft | DisplayOrientation.LandscapeRight;
+
             _ecs = new EntityComponentManager();
             _sys = new SystemManager(_ecs);
         }
@@ -89,7 +96,7 @@ namespace Game1
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
                 Exit();
 
             // TODO: Add your update logic here
