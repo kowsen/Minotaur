@@ -7,7 +7,7 @@ using Minotaur;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 
-namespace Game1
+namespace BounceLogic
 {
     public class RenderSystem : EntitySystem
     {

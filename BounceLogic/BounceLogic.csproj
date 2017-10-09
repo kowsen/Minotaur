@@ -42,16 +42,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BounceScene.cs" />
-    <Compile Include="BounceScene2.cs" />
-    <Compile Include="BounceSystem.cs" />
-    <Compile Include="EndMessengerSystem.cs" />
-    <Compile Include="MovementSystem.cs" />
-    <Compile Include="PositionComponent.cs" />
+    <Compile Include="Scenes\BounceScene.cs" />
+    <Compile Include="Scenes\BounceScene2.cs" />
+    <Compile Include="Systems\BounceSystem.cs" />
+    <Compile Include="Systems\EndMessengerSystem.cs" />
+    <Compile Include="Systems\MovementSystem.cs" />
+    <Compile Include="Components\PositionComponent.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RenderSystem.cs" />
-    <Compile Include="TextureComponent.cs" />
-    <Compile Include="VelocityComponent.cs" />
+    <Compile Include="Systems\RenderSystem.cs" />
+    <Compile Include="Components\TextureComponent.cs" />
+    <Compile Include="Components\VelocityComponent.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Minotaur\Minotaur.csproj">

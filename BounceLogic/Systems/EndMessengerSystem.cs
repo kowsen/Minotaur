@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Minotaur;
 
-namespace Game1
+namespace BounceLogic
 {
     public class EndMessengerSystem : GameSystem
     {

@@ -1,9 +1,9 @@
-using Game1;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Minotaur;
 using System;
+using BounceLogic;
 
 namespace AndroidMinotaur
 {

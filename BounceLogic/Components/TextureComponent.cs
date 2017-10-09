@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Minotaur;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Game1
+namespace BounceLogic
 {
     public class TextureComponent : IComponent
     {

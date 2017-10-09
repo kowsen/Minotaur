@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Minotaur", "Minotaur\Minota
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MinotaurTest", "MinotaurTest\MinotaurTest.csproj", "{A9C6EFA2-2D42-475C-9631-98FB8545290A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Game1", "Game1\Game1.csproj", "{2FCAEAF1-71AB-48D0-9DA8-EC411E2CBFAA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DesktopMinotaur", "Game1\DesktopMinotaur.csproj", "{2FCAEAF1-71AB-48D0-9DA8-EC411E2CBFAA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AndroidMinotaur", "AndroidMinotaur\AndroidMinotaur.csproj", "{822831F6-7A74-4E74-BE5C-B4596C7C6B03}"
 EndProject

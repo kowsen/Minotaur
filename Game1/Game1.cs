@@ -3,8 +3,9 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Minotaur;
 using System;
+using BounceLogic;
 
-namespace Game1
+namespace DesktopMinotaur
 {
     /// <summary>
     /// This is the main type for your game.

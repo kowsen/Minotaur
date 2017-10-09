@@ -7,7 +7,7 @@ using Minotaur;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
 
-namespace Game1
+namespace BounceLogic
 {
     public class BounceScene2 : Scene
     {

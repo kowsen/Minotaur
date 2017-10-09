@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Game1
+namespace DesktopMinotaur
 {
     /// <summary>
     /// The main class.
