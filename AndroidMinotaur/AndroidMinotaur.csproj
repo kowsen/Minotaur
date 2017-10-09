@@ -59,15 +59,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Activity1.cs" />
-    <Compile Include="BounceSystem.cs" />
     <Compile Include="Game1.cs" />
-    <Compile Include="MovementSystem.cs" />
-    <Compile Include="PositionComponent.cs" />
-    <Compile Include="RenderSystem.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TextureComponent.cs" />
-    <Compile Include="VelocityComponent.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />
@@ -95,6 +89,10 @@
     <None Include="Properties\AndroidManifest.xml" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\BounceLogic\BounceLogic.csproj">
+      <Project>{cef4b921-02e0-465e-9deb-ad1f61ba1ca9}</Project>
+      <Name>BounceLogic</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Minotaur\Minotaur.csproj">
       <Project>{f3333491-a087-4ffc-b8ec-9493c925e4b1}</Project>
       <Name>Minotaur</Name>

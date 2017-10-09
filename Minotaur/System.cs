@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Minotaur
 {
-    public class GameSystem
+    public abstract class EntitySystem
     {
         public int Signature;
         public List<Type> Types = new List<Type>();
@@ -30,6 +30,19 @@ namespace Minotaur
         }
 
         public virtual void Draw(TimeSpan time, List<Entity> entities)
+        {
+
+        }
+    }
+
+    public abstract class GameSystem
+    {
+        public virtual void Update(TimeSpan time)
+        {
+
+        }
+
+        public virtual void Draw(TimeSpan time)
         {
 
         }

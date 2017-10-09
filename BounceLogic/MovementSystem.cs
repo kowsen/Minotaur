@@ -7,7 +7,7 @@ using Minotaur;
 
 namespace Game1
 {
-    public class MovementSystem : GameSystem
+    public class MovementSystem : EntitySystem
     {
         public MovementSystem()
         {

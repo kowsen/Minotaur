@@ -15,8 +15,7 @@ namespace AndroidMinotaur
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
-        EntityComponentManager _ecs;
-        SystemManager _sys;
+        World world;
 
         public Game1()
         {
@@ -27,9 +26,6 @@ namespace AndroidMinotaur
             graphics.PreferredBackBufferWidth = 800;
             graphics.PreferredBackBufferHeight = 480;
             graphics.SupportedOrientations = DisplayOrientation.LandscapeLeft | DisplayOrientation.LandscapeRight;
-
-            _ecs = new EntityComponentManager();
-            _sys = new SystemManager(_ecs);
         }
 
         /// <summary>
@@ -55,29 +51,24 @@ namespace AndroidMinotaur
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             // TODO: use this.Content to load your game content here
-            var sprite = Content.Load<Texture2D>("sprite");
+            world = new World();
+            world.AddScene("bounce", new BounceScene(Content, spriteBatch, GraphicsDevice.Viewport.Bounds.Width, GraphicsDevice.Viewport.Bounds.Height));
+            world.AddScene("bounce2", new BounceScene2(Content, spriteBatch, GraphicsDevice.Viewport.Bounds.Width, GraphicsDevice.Viewport.Bounds.Height));
+            world.Switch("bounce");
 
-            var r = new Random();
-            for (var i = 0; i < 100; i++)
+            world.Bus.OnEvent += (val) =>
             {
-                AddBounceBox(r.Next(0, 400), r.Next(0, 400), r.Next(1, 5), r.Next(1, 5), sprite);
-            }
-
-            var entity2 = _ecs.CreateEntity();
-            entity2.AddComponent(new PositionComponent(100, 200));
-            entity2.AddComponent(new TextureComponent(sprite));
-
-            _sys.AddSystem(new RenderSystem(spriteBatch));
-            _sys.AddSystem(new MovementSystem());
-            _sys.AddSystem(new BounceSystem(GraphicsDevice.Viewport.Bounds.Width, GraphicsDevice.Viewport.Bounds.Height));
-        }
-
-        private void AddBounceBox(int x, int y, int vx, int vy, Texture2D sprite)
-        {
-            var entity = _ecs.CreateEntity();
-            entity.AddComponent(new PositionComponent(x, y));
-            entity.AddComponent(new VelocityComponent(vx, vy));
-            entity.AddComponent(new TextureComponent(sprite));
+                if (val.Equals("bounce_end"))
+                {
+                    world.Switch("bounce2");
+                    world.Reset("bounce");
+                }
+                else if (val.Equals("bounce2_end"))
+                {
+                    world.Switch("bounce");
+                    world.Reset("bounce2");
+                }
+            };
         }
 
         /// <summary>
@@ -100,7 +91,7 @@ namespace AndroidMinotaur
                 Exit();
 
             // TODO: Add your update logic here
-            _sys.Update(gameTime.ElapsedGameTime);
+            world.Update(gameTime.ElapsedGameTime);
 
             base.Update(gameTime);
         }
@@ -115,7 +106,7 @@ namespace AndroidMinotaur
 
             // TODO: Add your drawing code here
             spriteBatch.Begin();
-            _sys.Draw(gameTime.ElapsedGameTime);
+            world.Draw(gameTime.ElapsedGameTime);
             spriteBatch.End();
 
             base.Draw(gameTime);

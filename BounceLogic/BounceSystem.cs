@@ -7,7 +7,7 @@ using Minotaur;
 
 namespace Game1
 {
-    public class BounceSystem : GameSystem
+    public class BounceSystem : EntitySystem
     {
         private int _screenWidth;
         private int _screenHeight;

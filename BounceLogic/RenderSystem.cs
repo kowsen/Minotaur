@@ -9,7 +9,7 @@ using Microsoft.Xna.Framework;
 
 namespace Game1
 {
-    public class RenderSystem : GameSystem
+    public class RenderSystem : EntitySystem
     {
         private SpriteBatch _spriteBatch;
 
