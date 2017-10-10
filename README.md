@@ -1,2 +1,2 @@
 # Minotaur
-A simple, bare bones Entity Component System for C#
+A simple, bare bones Entity Component System for C#. The goal isn't to be the most performant or memory efficient ecs in the world. It's just to make one performant and expandable enough for my relatively simple Monogame projects, and to help me learn how best to utilize an ecs by building one up myself.
