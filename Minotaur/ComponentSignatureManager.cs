@@ -69,6 +69,18 @@ namespace Minotaur
             return signature.Get(typeBits + 1);
         }
 
+        public static bool ValidateSignature(BitSet signature)
+        {
+            for (var i = 0; i < signature.Length; i += 2)
+            {
+                if (signature.Get(i) && signature.Get(i + 1))
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
         private static int GetComponentBit(Type type)
         {
             int signature;

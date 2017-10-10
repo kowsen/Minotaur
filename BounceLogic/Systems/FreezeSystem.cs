@@ -29,7 +29,7 @@ namespace BounceLogic
                 {
                     for (var i = 0; i < entities.Entities.Count; i++)
                     {
-                        entities.Entities[i].AddComponent(new VelocityComponent(_r.Next(1, 5), _r.Next(1, 5)));
+                        entities.Entities[i].AddComponentOnNextTick(new VelocityComponent(_r.Next(1, 5), _r.Next(1, 5)));
                     }
                 }
                 else

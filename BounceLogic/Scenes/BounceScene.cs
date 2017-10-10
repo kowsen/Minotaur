@@ -47,7 +47,7 @@ namespace BounceLogic
             _sm.AddSystem(new MovementSystem());
             _sm.AddSystem(new BounceSystem(_width, _height));
             _sm.AddSystem(new FreezeSystem());
-            _sm.AddSystem(new EndMessengerSystem(_bus, "bounce_end", 5000));
+            //_sm.AddSystem(new EndMessengerSystem(_bus, "bounce_end", 5000));
         }
 
         private Entity AddBounceBox(int x, int y, int vx, int vy, Texture2D sprite)

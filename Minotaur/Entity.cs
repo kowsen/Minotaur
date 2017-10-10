@@ -20,6 +20,11 @@ namespace Minotaur
             _ecs.AddComponent(Id, component);
         }
 
+        public void AddComponentOnNextTick<T>(T component) where T : IComponent
+        {
+            _ecs.AddComponentOnNextTick(Id, component);
+        }
+
         public T GetComponent<T>()
         {
             return _ecs.GetComponent<T>(Id);

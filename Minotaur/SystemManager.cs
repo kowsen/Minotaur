@@ -49,7 +49,7 @@ namespace Minotaur
                 _gameSystems[i].Update(time);
             }
 
-            _ecs.ProcessRemovalQueue();
+            _ecs.ProcessAddRemovalQueue();
         }
 
         public void Draw(TimeSpan time)
@@ -73,7 +73,7 @@ namespace Minotaur
                 _gameSystems[i].Draw(time);
             }
 
-            _ecs.ProcessRemovalQueue();
+            _ecs.ProcessAddRemovalQueue();
         }
     }
 }

@@ -9,7 +9,8 @@ namespace Minotaur
         private Dictionary<int, Dictionary<Type, IComponent>> _entityComponentMap;
         private Dictionary<BitSet, EntitySet> _matchers;
 
-        private List<KeyValuePair<int, Type>> _removalQueue;
+        private List<Tuple<int, IComponent, Type>> _addQueue;
+        private List<Tuple<int, Type>> _removalQueue;
 
         private EntityFactory _entityFactory;
 
@@ -19,7 +20,8 @@ namespace Minotaur
             _entityComponentMap = new Dictionary<int, Dictionary<Type, IComponent>>();
             _matchers = new Dictionary<BitSet, EntitySet>();
 
-            _removalQueue = new List<KeyValuePair<int, Type>>();
+            _addQueue = new List<Tuple<int, IComponent, Type>>();
+            _removalQueue = new List<Tuple<int, Type>>();
 
             _entityFactory = new EntityFactory(this);
         }
@@ -29,7 +31,17 @@ namespace Minotaur
             return _entityFactory.Create();
         }
 
-        public void AddComponent<T>(int entityId, T component) where T: IComponent
+        public void AddComponentOnNextTick<T>(int entityId, T component) where T : IComponent
+        {
+            _addQueue.Add(new Tuple<int, IComponent, Type>(entityId, component, typeof(T)));
+        }
+
+        public void AddComponent<T>(int entityId, T component) where T : IComponent
+        {
+            AddComponentWithConcreteType(entityId, component, typeof(T));
+        }
+
+        private void AddComponentWithConcreteType(int entityId, IComponent component, Type type)
         {
             if (!_entities.ContainsKey(entityId))
             {
@@ -44,7 +56,6 @@ namespace Minotaur
                 _entityComponentMap[entityId] = components;
             }
 
-            var type = typeof(T);
             if (components.ContainsKey(type))
             {
                 throw new Exception($"Inserting duplicate component into entity with Id {entityId}");
@@ -58,11 +69,11 @@ namespace Minotaur
             {
                 var signature = pair.Key;
                 var entities = pair.Value;
-                if (ComponentSignatureManager.IsTypeInSignatureRequirements(signature, typeof(T)) && DoesEntityMatchSignature(entityId, signature))
+                if (ComponentSignatureManager.IsTypeInSignatureRequirements(signature, type) && DoesEntityMatchSignature(entityId, signature))
                 {
                     entities.Entities.Add(entity);
                 }
-                if (ComponentSignatureManager.IsTypeInSignatureRestrictions(signature, typeof(T)) && entities.Entities.Contains(entity) && !DoesEntityMatchSignature(entityId, signature))
+                if (ComponentSignatureManager.IsTypeInSignatureRestrictions(signature, type) && entities.Entities.Contains(entity) && !DoesEntityMatchSignature(entityId, signature))
                 {
                     entities.Entities.Remove(entity);
                 }
@@ -71,7 +82,7 @@ namespace Minotaur
 
         public void RemoveComponentOnNextTick(int entityId, Type type)
         {
-            _removalQueue.Add(new KeyValuePair<int, Type>(entityId, type));
+            _removalQueue.Add(new Tuple<int, Type>(entityId, type));
         }
 
         public void RemoveComponent(int entityId, Type type)
@@ -121,12 +132,17 @@ namespace Minotaur
             return (T)component;
         }
 
-        public void ProcessRemovalQueue()
+        public void ProcessAddRemovalQueue()
         {
+            for (var i = 0; i < _addQueue.Count; i++)
+            {
+                AddComponentWithConcreteType(_addQueue[i].Item1, _addQueue[i].Item2, _addQueue[i].Item3);
+            }
             for (var i = 0; i < _removalQueue.Count; i++)
             {
-                RemoveComponent(_removalQueue[i].Key, _removalQueue[i].Value);
+                RemoveComponent(_removalQueue[i].Item1, _removalQueue[i].Item2);
             }
+            _addQueue.Clear();
             _removalQueue.Clear();
         }
 
@@ -141,6 +157,10 @@ namespace Minotaur
             var success = _matchers.TryGetValue(signature, out entities);
             if (!success)
             {
+                if (!ComponentSignatureManager.ValidateSignature(signature))
+                {
+                    throw new Exception("Trying to fetch with invalid signature (including and excluding the same component)");
+                }
                 entities = new EntitySet(signature, this);
                 foreach (var entityId in _entityComponentMap.Keys)
                 {
