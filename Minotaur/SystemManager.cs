@@ -19,7 +19,7 @@ namespace Minotaur
 
         public void AddSystem(EntitySystem system)
         {
-            system.Signature = _ecs.GetSignature(system.Types);
+            system.Signature = _ecs.GetSignature(system.TypeRequirements, system.TypeRestrictions);
             _entitySystems.Add(system);
         }
 
@@ -34,10 +34,13 @@ namespace Minotaur
             {
                 var system = _entitySystems[i];
                 var entities = _ecs.GetEntities(system.Signature);
-                system.Update(time, entities);
-                for (var j = 0; j < entities.Count; j++)
+                if (entities.Entities.Count > 0)
                 {
-                    system.Update(time, entities[j]);
+                    system.Update(time, entities);
+                    for (var j = 0; j < entities.Entities.Count; j++)
+                    {
+                        system.Update(time, entities.Entities[j]);
+                    }
                 }
             }
 
@@ -45,6 +48,8 @@ namespace Minotaur
             {
                 _gameSystems[i].Update(time);
             }
+
+            _ecs.ProcessRemovalQueue();
         }
 
         public void Draw(TimeSpan time)
@@ -53,10 +58,13 @@ namespace Minotaur
             {
                 var system = _entitySystems[i];
                 var entities = _ecs.GetEntities(system.Signature);
-                system.Draw(time, entities);
-                for (var j = 0; j < entities.Count; j++)
+                if (entities.Entities.Count > 0)
                 {
-                    system.Draw(time, entities[j]);
+                    system.Draw(time, entities);
+                    for (var j = 0; j < entities.Entities.Count; j++)
+                    {
+                        system.Draw(time, entities.Entities[j]);
+                    }
                 }
             }
 
@@ -64,6 +72,8 @@ namespace Minotaur
             {
                 _gameSystems[i].Draw(time);
             }
+
+            _ecs.ProcessRemovalQueue();
         }
     }
 }

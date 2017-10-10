@@ -11,8 +11,8 @@ namespace BounceLogic
     {
         public MovementSystem()
         {
-            AddComponentConstraint<PositionComponent>();
-            AddComponentConstraint<VelocityComponent>();
+            AddComponentRequirement<PositionComponent>();
+            AddComponentRequirement<VelocityComponent>();
         }
 
         public override void Update(TimeSpan time, Entity entity)

@@ -30,27 +30,33 @@ namespace BounceLogic
             var sprite = _content.Load<Texture2D>("sprite");
 
             var r = new Random();
-            for (var i = 0; i < 1000; i++)
+            for (var i = 0; i < 10; i++)
             {
-                AddBounceBox(r.Next(0, 400), r.Next(0, 400), r.Next(1, 5), r.Next(1, 5), sprite);
+                var box = AddBounceBox(r.Next(0, 400), r.Next(0, 400), r.Next(1, 5), r.Next(1, 5), sprite);
+                if (i % 2 == 0)
+                {
+                    box.AddComponent(new BigFlagComponent());
+                }
             }
 
             var entity2 = _ecm.CreateEntity();
-            entity2.AddComponent(new PositionComponent(100, 200));
+            entity2.AddComponent(new PositionComponent(200, 200));
             entity2.AddComponent(new TextureComponent(sprite));
 
             _sm.AddSystem(new RenderSystem(_spriteBatch));
             _sm.AddSystem(new MovementSystem());
             _sm.AddSystem(new BounceSystem(_width, _height));
+            _sm.AddSystem(new FreezeSystem());
             _sm.AddSystem(new EndMessengerSystem(_bus, "bounce_end", 5000));
         }
 
-        private void AddBounceBox(int x, int y, int vx, int vy, Texture2D sprite)
+        private Entity AddBounceBox(int x, int y, int vx, int vy, Texture2D sprite)
         {
             var entity = _ecm.CreateEntity();
             entity.AddComponent(new PositionComponent(x, y));
             entity.AddComponent(new VelocityComponent(vx, vy));
             entity.AddComponent(new TextureComponent(sprite));
+            return entity;
         }
     }
 }

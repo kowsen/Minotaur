@@ -42,10 +42,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Components\BigFlagComponent.cs" />
     <Compile Include="Scenes\BounceScene.cs" />
     <Compile Include="Scenes\BounceScene2.cs" />
     <Compile Include="Systems\BounceSystem.cs" />
     <Compile Include="Systems\EndMessengerSystem.cs" />
+    <Compile Include="Systems\FreezeSystem.cs" />
     <Compile Include="Systems\MovementSystem.cs" />
     <Compile Include="Components\PositionComponent.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

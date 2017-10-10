@@ -6,12 +6,18 @@ namespace Minotaur
 {
     public abstract class EntitySystem
     {
-        public int Signature;
-        public List<Type> Types = new List<Type>();
+        public BitSet Signature;
+        public List<Type> TypeRequirements = new List<Type>();
+        public List<Type> TypeRestrictions = new List<Type>();
 
-        protected void AddComponentConstraint<T>() where T : IComponent
+        protected void AddComponentRequirement<T>() where T : IComponent
         {
-            Types.Add(typeof(T));
+            TypeRequirements.Add(typeof(T));
+        }
+
+        protected void AddComponentRestriction<T>() where T : IComponent
+        {
+            TypeRestrictions.Add(typeof(T));
         }
 
         public virtual void Update(TimeSpan time, Entity entity)
@@ -19,7 +25,7 @@ namespace Minotaur
 
         }
 
-        public virtual void Update(TimeSpan time, List<Entity> entities)
+        public virtual void Update(TimeSpan time, EntitySet entities)
         {
 
         }
@@ -29,7 +35,7 @@ namespace Minotaur
 
         }
 
-        public virtual void Draw(TimeSpan time, List<Entity> entities)
+        public virtual void Draw(TimeSpan time, EntitySet entities)
         {
 
         }

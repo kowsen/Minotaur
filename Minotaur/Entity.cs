@@ -30,6 +30,11 @@ namespace Minotaur
             _ecs.RemoveComponent(Id, type);
         }
 
+        public void RemoveComponentOnNextTick(Type type)
+        {
+            _ecs.RemoveComponentOnNextTick(Id, type);
+        }
+
         public bool Equals(Entity other)
         {
             return Id == other.Id;

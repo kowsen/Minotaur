@@ -16,8 +16,8 @@ namespace BounceLogic
         {
             _screenWidth = screenWidth;
             _screenHeight = screenHeight;
-            AddComponentConstraint<PositionComponent>();
-            AddComponentConstraint<VelocityComponent>();
+            AddComponentRequirement<PositionComponent>();
+            AddComponentRequirement<VelocityComponent>();
         }
 
         public override void Update(TimeSpan time, Entity entity)

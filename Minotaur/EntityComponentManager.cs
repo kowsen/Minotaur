@@ -7,19 +7,21 @@ namespace Minotaur
     {
         private Dictionary<int, Entity> _entities;
         private Dictionary<int, Dictionary<Type, IComponent>> _entityComponentMap;
-        private Dictionary<int, List<Entity>> _matchers;
+        private Dictionary<BitSet, EntitySet> _matchers;
+
+        private List<KeyValuePair<int, Type>> _removalQueue;
 
         private EntityFactory _entityFactory;
-        private ComponentSignatureManager _signatureManager;
 
         public EntityComponentManager()
         {
             _entities = new Dictionary<int, Entity>();
             _entityComponentMap = new Dictionary<int, Dictionary<Type, IComponent>>();
-            _matchers = new Dictionary<int, List<Entity>>();
+            _matchers = new Dictionary<BitSet, EntitySet>();
+
+            _removalQueue = new List<KeyValuePair<int, Type>>();
 
             _entityFactory = new EntityFactory(this);
-            _signatureManager = new ComponentSignatureManager();
         }
 
         public Entity CreateEntity()
@@ -51,15 +53,25 @@ namespace Minotaur
             components[type] = component;
 
             // update matchers
+            var entity = _entities[entityId];
             foreach (var pair in _matchers)
             {
                 var signature = pair.Key;
                 var entities = pair.Value;
-                if (_signatureManager.IsTypeInSignature(signature, typeof(T)) && DoesEntityMatchSignature(entityId, signature))
+                if (ComponentSignatureManager.IsTypeInSignatureRequirements(signature, typeof(T)) && DoesEntityMatchSignature(entityId, signature))
                 {
-                    entities.Add(_entities[entityId]);
+                    entities.Entities.Add(entity);
+                }
+                if (ComponentSignatureManager.IsTypeInSignatureRestrictions(signature, typeof(T)) && entities.Entities.Contains(entity) && !DoesEntityMatchSignature(entityId, signature))
+                {
+                    entities.Entities.Remove(entity);
                 }
             }
+        }
+
+        public void RemoveComponentOnNextTick(int entityId, Type type)
+        {
+            _removalQueue.Add(new KeyValuePair<int, Type>(entityId, type));
         }
 
         public void RemoveComponent(int entityId, Type type)
@@ -79,9 +91,13 @@ namespace Minotaur
             {
                 var signature = pair.Key;
                 var entities = pair.Value;
-                if (_signatureManager.IsTypeInSignature(signature, type) && entities.Contains(entity))
+                if (ComponentSignatureManager.IsTypeInSignatureRequirements(signature, type) && entities.Entities.Contains(entity))
                 {
-                    entities.Remove(entity);
+                    entities.Entities.Remove(entity);
+                }
+                if (ComponentSignatureManager.IsTypeInSignatureRestrictions(signature, type) && DoesEntityMatchSignature(entityId, signature))
+                {
+                    entities.Entities.Add(entity);
                 }
             }
         }
@@ -105,23 +121,32 @@ namespace Minotaur
             return (T)component;
         }
 
-        public int GetSignature(List<Type> types)
+        public void ProcessRemovalQueue()
         {
-            return _signatureManager.GenerateComponentSignature(types);
+            for (var i = 0; i < _removalQueue.Count; i++)
+            {
+                RemoveComponent(_removalQueue[i].Key, _removalQueue[i].Value);
+            }
+            _removalQueue.Clear();
         }
 
-        public List<Entity> GetEntities(int signature)
+        public BitSet GetSignature(List<Type> typeRequirements, List<Type> typeRestrictions)
         {
-            List<Entity> entities;
+            return ComponentSignatureManager.GenerateComponentSignature(typeRequirements, typeRestrictions);
+        }
+
+        public EntitySet GetEntities(BitSet signature)
+        {
+            EntitySet entities;
             var success = _matchers.TryGetValue(signature, out entities);
             if (!success)
             {
-                entities = new List<Entity>();
+                entities = new EntitySet(signature, this);
                 foreach (var entityId in _entityComponentMap.Keys)
                 {
                     if (DoesEntityMatchSignature(entityId, signature))
                     {
-                        entities.Add(_entities[entityId]);
+                        entities.Entities.Add(_entities[entityId]);
                     }
                 }
                 _matchers[signature] = entities;
@@ -129,11 +154,11 @@ namespace Minotaur
             return entities;
         }
 
-        private bool DoesEntityMatchSignature(int entityId, int signature)
+        private bool DoesEntityMatchSignature(int entityId, BitSet signature)
         {
             var components = _entityComponentMap[entityId];
             var componentTypes = new List<Type>(components.Keys);
-            return _signatureManager.CheckAgainstComponentSignature(signature, componentTypes);
+            return ComponentSignatureManager.CheckAgainstComponentSignature(signature, componentTypes);
         }
     }
 }
