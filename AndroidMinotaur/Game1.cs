@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Input;
 using Minotaur;
 using System;
 using BounceLogic;
+using BounceLogic.Scenes;
 
 namespace AndroidMinotaur
 {

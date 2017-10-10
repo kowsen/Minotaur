@@ -4,8 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Minotaur;
+using BounceLogic.Components;
 
-namespace BounceLogic
+namespace BounceLogic.Systems
 {
     public class FreezeSystem : EntitySystem
     {

@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Minotaur;
 
-namespace BounceLogic
+namespace BounceLogic.Components
 {
     public class BigFlagComponent : IComponent
     {

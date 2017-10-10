@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 using Minotaur;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
+using BounceLogic.Components;
 
-namespace BounceLogic
+namespace BounceLogic.Systems
 {
     public class RenderSystem : EntitySystem
     {
