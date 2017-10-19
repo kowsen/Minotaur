@@ -23,8 +23,8 @@ namespace SampleLogic.Systems
             var position = entity.GetComponent<PositionComponent>();
             var movement = entity.GetComponent<MovementComponent>();
 
-            var screenWidth = _game.Viewport.VirtualWidth;
-            var screenHeight = _game.Viewport.VirtualHeight;
+            var screenWidth = Game.Viewport.VirtualWidth;
+            var screenHeight = Game.Viewport.VirtualHeight;
 
             var didBounce = false;
 
@@ -41,7 +41,7 @@ namespace SampleLogic.Systems
 
             if (didBounce)
             {
-                _game.Bus.Notify(Events.BOUNCE, new BounceArgs(entity.Id));
+                Game.Bus.Notify(Events.BOUNCE, new BounceArgs(entity.Id));
             }
 
             position.X += movement.DX;

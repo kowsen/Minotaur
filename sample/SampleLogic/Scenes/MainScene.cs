@@ -26,18 +26,18 @@ namespace SampleLogic.Scenes
 
         public override void LoadContent()
         {
-            _playerTexture = _game.Content.Load<Texture2D>("player");
-            _boxTexture = _game.Content.Load<Texture2D>("box");
-            _directionsTexture = _game.Content.Load<Texture2D>("directions");
+            _playerTexture = Game.Content.Load<Texture2D>("player");
+            _boxTexture = Game.Content.Load<Texture2D>("box");
+            _directionsTexture = Game.Content.Load<Texture2D>("directions");
         }
 
         public override void Initialize()
         {
-            var directionsEntity = _ecm.CreateEntity();
+            var directionsEntity = Entities.CreateEntity();
             directionsEntity.AddComponent(new PositionComponent(50, 400));
             directionsEntity.AddComponent(new TextureComponent(_directionsTexture));
 
-            var playerEntity = _ecm.CreateEntity();
+            var playerEntity = Entities.CreateEntity();
             playerEntity.AddComponent(new PositionComponent(50, 50));
             playerEntity.AddComponent(new MovementComponent(0, 0));
             playerEntity.AddComponent(new PlayerFlagComponent());
@@ -48,18 +48,18 @@ namespace SampleLogic.Scenes
                 AddBox();
             }
 
-            _sm.AddSystem(new PlayerInputSystem());
-            _sm.AddSystem(new MovementSystem());
-            _sm.AddSystem(new BounceNotifySystem());
-            _sm.AddSystem(new BoxAddSystem(_boxTexture, _rand));
-            
-            _sm.AddSystem(new RenderSystem());
+            Systems.AddSystem(new PlayerInputSystem());
+            Systems.AddSystem(new MovementSystem());
+            Systems.AddSystem(new BounceNotifySystem());
+            Systems.AddSystem(new BoxAddSystem(_boxTexture, _rand));
+
+            Systems.AddSystem(new RenderSystem());
         }
 
         private void AddBox()
         {
-            var boxEntity = _ecm.CreateEntity();
-            boxEntity.AddComponent(new PositionComponent(_rand.Next(0, _game.Viewport.VirtualWidth), _rand.Next(0, _game.Viewport.VirtualHeight)));
+            var boxEntity = Entities.CreateEntity();
+            boxEntity.AddComponent(new PositionComponent(_rand.Next(0, Game.Viewport.VirtualWidth), _rand.Next(0, Game.Viewport.VirtualHeight)));
             boxEntity.AddComponent(new MovementComponent(_rand.Next(-2, 2), _rand.Next(-2, 2)));
             boxEntity.AddComponent(new TextureComponent(_boxTexture));
         }

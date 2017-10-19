@@ -6,14 +6,14 @@ namespace Minotaur
 {
     public class Scene<T>
     {
-        protected EntityComponentManager _ecm;
-        protected SystemManager<T> _sm;
+        protected EntityComponentManager Entities;
+        protected SystemManager<T> Systems;
 
-        protected T _game;
+        protected T Game;
 
         public virtual void Attach(T game)
         {
-            _game = game;
+            Game = game;
             ResetECS();
         }
 
@@ -29,12 +29,12 @@ namespace Minotaur
 
         public void Activate()
         {
-            _sm.ActivateSystems();
+            Systems.ActivateSystems();
         }
 
         public void Deactivate()
         {
-            _sm.DeactivateSystems();
+            Systems.DeactivateSystems();
         }
 
         public void Reset()
@@ -45,18 +45,18 @@ namespace Minotaur
 
         private void ResetECS()
         {
-            _ecm = new EntityComponentManager();
-            _sm = new SystemManager<T>(_ecm, _game);
+            Entities = new EntityComponentManager();
+            Systems = new SystemManager<T>(Entities, Game);
         }
 
         public void Update(TimeSpan time)
         {
-            _sm.Update(time);
+            Systems.Update(time);
         }
 
         public void Draw(TimeSpan time)
         {
-            _sm.Draw(time);
+            Systems.Draw(time);
         }
     }
 }

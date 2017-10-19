@@ -17,18 +17,18 @@ namespace SampleLogic.Scenes
 
         public override void LoadContent()
         {
-            _clickTexture = _game.Content.Load<Texture2D>("click");
+            _clickTexture = Game.Content.Load<Texture2D>("click");
         }
 
         public override void Initialize()
         {
-            var clickEntity = _ecm.CreateEntity();
+            var clickEntity = Entities.CreateEntity();
             clickEntity.AddComponent(new PositionComponent(100, 100));
             clickEntity.AddComponent(new TextureComponent(_clickTexture));
 
-            _sm.AddSystem(new StartListenSystem());
+            Systems.AddSystem(new StartListenSystem());
 
-            _sm.AddSystem(new RenderSystem());
+            Systems.AddSystem(new RenderSystem());
         }
     }
 }

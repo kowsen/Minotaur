@@ -23,18 +23,18 @@ namespace SampleLogic.Systems
 
         public override void OnActivate()
         {
-            _game.Bus.Register(Events.SPACE_PRESS, AddBox);
+            Game.Bus.Register(Events.SPACE_PRESS, AddBox);
         }
 
         public override void OnDeactivate()
         {
-            _game.Bus.Remove(Events.SPACE_PRESS, AddBox);
+            Game.Bus.Remove(Events.SPACE_PRESS, AddBox);
         }
 
         private void AddBox(EventBusArgs args)
         {
             var boxEntity = CreateEntity();
-            boxEntity.AddComponent(new PositionComponent(_rand.Next(0, _game.Viewport.VirtualWidth), _rand.Next(0, _game.Viewport.VirtualHeight)));
+            boxEntity.AddComponent(new PositionComponent(_rand.Next(0, Game.Viewport.VirtualWidth), _rand.Next(0, Game.Viewport.VirtualHeight)));
             boxEntity.AddComponent(new MovementComponent(_rand.Next(-2, 2), _rand.Next(-2, 2)));
             boxEntity.AddComponent(new TextureComponent(_boxTexture));
         }

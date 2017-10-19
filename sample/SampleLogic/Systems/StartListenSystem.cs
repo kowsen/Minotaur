@@ -12,17 +12,17 @@ namespace SampleLogic.Systems
     {
         public override void OnActivate()
         {
-            _game.Bus.Register(Events.SPACE_PRESS, OnSpacePress);
+            Game.Bus.Register(Events.SPACE_PRESS, OnSpacePress);
         }
 
         public override void OnDeactivate()
         {
-            _game.Bus.Remove(Events.SPACE_PRESS, OnSpacePress);
+            Game.Bus.Remove(Events.SPACE_PRESS, OnSpacePress);
         }
 
         private void OnSpacePress(EventBusArgs args)
         {
-            _game.Bus.Notify(Events.START);
+            Game.Bus.Notify(Events.START);
         }
     }
 }

@@ -7,13 +7,13 @@ namespace Minotaur
     public abstract class EntitySystem<T>
     {
         public BitSet Signature;
-        protected T _game;
-        private EntityComponentManager _ecm;
+        protected T Game;
+        private EntityComponentManager Entities;
 
         public void Attach(T game, EntityComponentManager ecm)
         {
-            _game = game;
-            _ecm = ecm;
+            Game = game;
+            Entities = ecm;
         }
 
         public virtual void Initialize() { }
@@ -21,11 +21,11 @@ namespace Minotaur
         public virtual void OnDeactivate() { }
         protected Entity CreateEntity()
         {
-            return _ecm.CreateEntity();
+            return Entities.CreateEntity();
         }
         protected EntitySet GetEntities()
         {
-            return _ecm.GetEntities(Signature);
+            return Entities.GetEntities(Signature);
         }
         public virtual void Update(TimeSpan time, Entity entity) { }
         public virtual void Update(TimeSpan time, EntitySet entities) { }
@@ -36,13 +36,13 @@ namespace Minotaur
     public abstract class GameSystem<T>
     {
         public BitSet Signature;
-        protected T _game;
-        private EntityComponentManager _ecm;
+        protected T Game;
+        private EntityComponentManager Entities;
 
         public void Attach(T game, EntityComponentManager ecm)
         {
-            _game = game;
-            _ecm = ecm;
+            Game = game;
+            Entities = ecm;
         }
 
         public virtual void Initialize() { }
@@ -50,11 +50,11 @@ namespace Minotaur
         public virtual void OnDeactivate() { }
         protected Entity CreateEntity()
         {
-            return _ecm.CreateEntity();
+            return Entities.CreateEntity();
         }
         public EntitySet GetEntities()
         {
-            return _ecm.GetEntities(Signature);
+            return Entities.GetEntities(Signature);
         }
         public virtual void Update(TimeSpan time) { }
         public virtual void Draw(TimeSpan time) { }

@@ -12,12 +12,12 @@ namespace SampleLogic.Systems
     {
         public override void OnActivate()
         {
-            _game.Bus.Register(Events.BOUNCE, OnBounce);
+            Game.Bus.Register(Events.BOUNCE, OnBounce);
         }
 
         public override void OnDeactivate()
         {
-            _game.Bus.Remove(Events.BOUNCE, OnBounce);
+            Game.Bus.Remove(Events.BOUNCE, OnBounce);
         }
 
         private void OnBounce(EventBusArgs args)

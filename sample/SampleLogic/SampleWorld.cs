@@ -16,7 +16,7 @@ namespace SampleLogic
         {
             base.Initialize();
 
-            _game.Bus.Register(Events.START, (_) =>
+            Game.Bus.Register(Events.START, (_) =>
             {
                 Switch("main");
             });

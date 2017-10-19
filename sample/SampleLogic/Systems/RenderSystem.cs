@@ -24,7 +24,7 @@ namespace SampleLogic.Systems
             var position = entity.GetComponent<PositionComponent>();
             var texture = entity.GetComponent<TextureComponent>().Texture;
 
-            _game.Batch.Draw(texture, new Vector2(position.X, position.Y), Color.White);
+            Game.Batch.Draw(texture, new Vector2(position.X, position.Y), Color.White);
         }
     }
 }
