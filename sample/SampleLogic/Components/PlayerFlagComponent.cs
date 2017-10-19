@@ -5,10 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using Minotaur;
 
-namespace SampleLogic.Scenes
+namespace SampleLogic.Components
 {
-    public class SampleScene : Scene<SampleGameObject>
+    public class PlayerFlagComponent : IComponent
     {
-
     }
 }

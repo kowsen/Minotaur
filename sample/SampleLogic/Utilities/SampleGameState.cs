@@ -4,9 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SampleLogic.Utils
+namespace SampleLogic.Utilities
 {
-    public class SampleGameObject
+    public class SampleGameState
     {
+        public float PlayerSpeed { get; set; } = 2;
     }
 }

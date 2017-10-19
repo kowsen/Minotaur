@@ -1,6 +1,12 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Minotaur;
+using MonoGame.Extended.Input.InputListeners;
+using MonoGame.Extended.ViewportAdapters;
+using SampleLogic;
+using SampleLogic.Scenes;
+using SampleLogic.Utilities;
 
 namespace SampleWindows
 {
@@ -11,11 +17,20 @@ namespace SampleWindows
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
-        
+
+        ViewportAdapter viewport;
+        SampleWorld world;
+        KeyboardListener keyboard;
+
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
+
+            graphics.PreferredBackBufferWidth = 500;
+            graphics.PreferredBackBufferHeight = 500;
+
+            keyboard = new KeyboardListener(new KeyboardListenerSettings());
         }
 
         /// <summary>
@@ -26,9 +41,71 @@ namespace SampleWindows
         /// </summary>
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
+            GraphicsDevice.Viewport = new Viewport(0, 0, 500, 500);
+            viewport = new BoxingViewportAdapter(Window, GraphicsDevice, 500, 500, 0, 0);
+
+            spriteBatch = new SpriteBatch(GraphicsDevice);
+
+            var gameObject = new SampleGameObject(Content, spriteBatch, GraphicsDevice, viewport);
+            InitializeInput(gameObject);
+
+            world = new SampleWorld(gameObject);
+            world.AddScene("start", new StartScene());
+            world.AddScene("main", new MainScene());
 
             base.Initialize();
+
+            world.Initialize();
+            world.Switch("start");
+        }
+
+        private void InitializeInput(SampleGameObject game)
+        {
+            keyboard.KeyPressed += (sender, args) =>
+            {
+                var key = args.Key;
+                if (key == Keys.Up)
+                {
+                    game.Input.IsUp = true;
+                }
+                else if (key == Keys.Right)
+                {
+                    game.Input.IsRight = true;
+                }
+                else if (key == Keys.Down)
+                {
+                    game.Input.IsDown = true;
+                }
+                else if (key == Keys.Left)
+                {
+                    game.Input.IsLeft = true;
+                }
+                else if (key == Keys.Space)
+                {
+                    game.Bus.Notify(Events.SPACE_PRESS);
+                }
+            };
+
+            keyboard.KeyReleased += (sender, args) =>
+            {
+                var key = args.Key;
+                if (key == Keys.Up)
+                {
+                    game.Input.IsUp = false;
+                }
+                else if (key == Keys.Right)
+                {
+                    game.Input.IsRight = false;
+                }
+                else if (key == Keys.Down)
+                {
+                    game.Input.IsDown = false;
+                }
+                else if (key == Keys.Left)
+                {
+                    game.Input.IsLeft = false;
+                }
+            };
         }
 
         /// <summary>
@@ -37,10 +114,7 @@ namespace SampleWindows
         /// </summary>
         protected override void LoadContent()
         {
-            // Create a new SpriteBatch, which can be used to draw textures.
-            spriteBatch = new SpriteBatch(GraphicsDevice);
-
-            // TODO: use this.Content to load your game content here
+            world.LoadContent();
         }
 
         /// <summary>
@@ -62,7 +136,8 @@ namespace SampleWindows
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            // TODO: Add your update logic here
+            keyboard.Update(gameTime);
+            world.Update(gameTime.ElapsedGameTime);
 
             base.Update(gameTime);
         }
@@ -75,7 +150,9 @@ namespace SampleWindows
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            // TODO: Add your drawing code here
+            spriteBatch.Begin(transformMatrix: viewport.GetScaleMatrix());
+            world.Draw(gameTime.ElapsedGameTime);
+            spriteBatch.End();
 
             base.Draw(gameTime);
         }

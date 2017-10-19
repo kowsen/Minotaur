@@ -48,6 +48,10 @@ namespace Minotaur
         public virtual void Initialize() { }
         public virtual void OnActivate() { }
         public virtual void OnDeactivate() { }
+        protected Entity CreateEntity()
+        {
+            return _ecm.CreateEntity();
+        }
         public EntitySet GetEntities()
         {
             return _ecm.GetEntities(Signature);
