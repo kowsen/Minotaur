@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SampleLogic
+namespace SampleLogic.Utils
 {
-    public class Class1
+    public class SampleGameObject
     {
     }
 }

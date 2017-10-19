@@ -19,7 +19,11 @@ namespace Minotaur
         public virtual void Initialize() { }
         public virtual void OnActivate() { }
         public virtual void OnDeactivate() { }
-        public EntitySet GetEntities()
+        protected Entity CreateEntity()
+        {
+            return _ecm.CreateEntity();
+        }
+        protected EntitySet GetEntities()
         {
             return _ecm.GetEntities(Signature);
         }
