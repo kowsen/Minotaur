@@ -102,7 +102,7 @@
     <None Include="Properties\AndroidManifest.xml" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\MinotaurCore\Minotaur.csproj">
+    <ProjectReference Include="..\..\Minotaur\Minotaur.csproj">
       <Project>{CF4272A9-FFDE-432E-A81E-9A6E4692750E}</Project>
       <Name>Minotaur</Name>
     </ProjectReference>

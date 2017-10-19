@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27004.2002
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Minotaur", "MinotaurCore\Minotaur.csproj", "{CF4272A9-FFDE-432E-A81E-9A6E4692750E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Minotaur", "Minotaur\Minotaur.csproj", "{CF4272A9-FFDE-432E-A81E-9A6E4692750E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleLogic", "sample\SampleLogic\SampleLogic.csproj", "{EE4E4EE9-0B62-4A58-A7AE-27BEE9D57642}"
 EndProject

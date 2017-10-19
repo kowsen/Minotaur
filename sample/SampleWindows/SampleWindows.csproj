@@ -119,7 +119,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\MinotaurCore\Minotaur.csproj">
+    <ProjectReference Include="..\..\Minotaur\Minotaur.csproj">
       <Project>{cf4272a9-ffde-432e-a81e-9a6e4692750e}</Project>
       <Name>Minotaur</Name>
     </ProjectReference>
