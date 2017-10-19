@@ -20,6 +20,7 @@ namespace SampleAndroid
             base.OnCreate(bundle);
             var g = new Game1();
             SetContentView((View)g.Services.GetService(typeof(View)));
+            Window.DecorView.SystemUiVisibility = (StatusBarVisibility)(SystemUiFlags.ImmersiveSticky | SystemUiFlags.Fullscreen | SystemUiFlags.HideNavigation);
             g.Run();
         }
     }

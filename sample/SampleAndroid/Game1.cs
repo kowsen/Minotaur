@@ -1,6 +1,12 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using MonoGame.Extended.Input.InputListeners;
+using MonoGame.Extended.ViewportAdapters;
+using SampleLogic;
+using SampleLogic.Scenes;
+using SampleLogic.Utilities;
+using System;
 
 namespace SampleAndroid
 {
@@ -11,6 +17,10 @@ namespace SampleAndroid
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
+        ViewportAdapter viewport;
+
+        SampleWorld world;
+        TouchListener touch;
 
         public Game1()
         {
@@ -18,9 +28,11 @@ namespace SampleAndroid
             Content.RootDirectory = "Content";
 
             graphics.IsFullScreen = true;
-            graphics.PreferredBackBufferWidth = 800;
-            graphics.PreferredBackBufferHeight = 480;
-            graphics.SupportedOrientations = DisplayOrientation.LandscapeLeft | DisplayOrientation.LandscapeRight;
+            graphics.PreferredBackBufferWidth = 540;
+            graphics.PreferredBackBufferHeight = 960;
+            graphics.SupportedOrientations = DisplayOrientation.Portrait;
+
+            touch = new TouchListener(new TouchListenerSettings());
         }
 
         /// <summary>
@@ -31,9 +43,80 @@ namespace SampleAndroid
         /// </summary>
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
+            GraphicsDevice.Viewport = new Viewport(0, 0, 540, 960);
+            viewport = new BoxingViewportAdapter(Window, GraphicsDevice, 540, 960, 0, 0);
+
+            spriteBatch = new SpriteBatch(GraphicsDevice);
+
+            var gameObject = new SampleGameObject(Content, spriteBatch, GraphicsDevice, viewport);
+            InitializeInput(gameObject);
+
+            world = new SampleWorld(gameObject);
+            world.AddScene("start", new StartScene());
+            world.AddScene("main", new MainScene());
 
             base.Initialize();
+
+            world.Initialize();
+            world.Switch("start");
+        }
+
+        private void InitializeInput(SampleGameObject game)
+        {
+            Point startPoint = new Point();
+            touch.TouchStarted += HandleTouchStart;
+            touch.TouchEnded += HandleTouchEnd;
+
+            void HandleTouchStart(object sender, TouchEventArgs args)
+            {
+                startPoint = args.Position;
+            }
+
+            void HandleTouchEnd(object sender, TouchEventArgs args)
+            {
+                var endPoint = args.Position;
+                HandleSwipe(endPoint.X - startPoint.X, endPoint.Y - startPoint.Y);
+            }
+
+            void HandleSwipe(int dx, int dy)
+            {
+                if (Math.Abs(dx) + Math.Abs(dy) < 50)
+                {
+                    game.Bus.Notify(Events.SPACE_PRESS);
+                }
+                else if (-dy > Math.Abs(dx))
+                {
+                    // NORTH
+                    ResetInputState(game.Input);
+                    game.Input.IsUp = true;
+                }
+                else if (dx >= Math.Abs(dy))
+                {
+                    // EAST
+                    ResetInputState(game.Input);
+                    game.Input.IsRight = true;
+                }
+                else if (dy > Math.Abs(dx))
+                {
+                    // SOUTH
+                    ResetInputState(game.Input);
+                    game.Input.IsDown = true;
+                }
+                else if (-dx >= Math.Abs(dy))
+                {
+                    // WEST
+                    ResetInputState(game.Input);
+                    game.Input.IsLeft = true;
+                }
+            }
+
+            void ResetInputState(InputState state)
+            {
+                game.Input.IsUp = false;
+                game.Input.IsRight = false;
+                game.Input.IsDown = false;
+                game.Input.IsLeft = false;
+            }
         }
 
         /// <summary>
@@ -42,10 +125,7 @@ namespace SampleAndroid
         /// </summary>
         protected override void LoadContent()
         {
-            // Create a new SpriteBatch, which can be used to draw textures.
-            spriteBatch = new SpriteBatch(GraphicsDevice);
-
-            // TODO: use this.Content to load your game content here
+            world.LoadContent();
         }
 
         /// <summary>
@@ -67,7 +147,8 @@ namespace SampleAndroid
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
                 Exit();
 
-            // TODO: Add your update logic here
+            touch.Update(gameTime);
+            world.Update(gameTime.ElapsedGameTime);
 
             base.Update(gameTime);
         }
@@ -80,7 +161,9 @@ namespace SampleAndroid
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            // TODO: Add your drawing code here
+            spriteBatch.Begin(transformMatrix: viewport.GetScaleMatrix());
+            world.Draw(gameTime.ElapsedGameTime);
+            spriteBatch.End();
 
             base.Draw(gameTime);
         }
