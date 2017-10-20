@@ -36,12 +36,18 @@ namespace Minotaur
             }
         }
 
-        public virtual void Initialize()
+        public void Initialize()
         {
             foreach (var scene in _scenes)
             {
                 scene.Value.Initialize();
             }
+            InitializeListeners();
+        }
+
+        public virtual void InitializeListeners()
+        {
+
         }
 
         public void Switch(string key)

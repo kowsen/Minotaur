@@ -12,10 +12,8 @@ namespace SampleLogic
     {
         public SampleWorld(SampleGameObject game) : base(game) { }
 
-        public override void Initialize()
+        public override void InitializeListeners()
         {
-            base.Initialize();
-
             Game.Bus.Register(Events.START, (_) =>
             {
                 Switch("main");
