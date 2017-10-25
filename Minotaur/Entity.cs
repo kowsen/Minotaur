@@ -30,6 +30,11 @@ namespace Minotaur
             return _ecs.GetComponent<T>(Id);
         }
 
+        public bool HasComponent<T>()
+        {
+            return _ecs.HasComponent<T>(Id);
+        }
+
         public void RemoveComponent(Type type)
         {
             _ecs.RemoveComponent(Id, type);

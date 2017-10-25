@@ -130,6 +130,17 @@ namespace Minotaur
             return (T)component;
         }
 
+        public bool HasComponent<T>(int entityId)
+        {
+            var success = _entityComponentMap.TryGetValue(entityId, out var components);
+            if (!success)
+            {
+                throw new Exception($"Trying to get component of type {typeof(T)} from nonexistent entity with Id {entityId}");
+            }
+
+            return components.ContainsKey(typeof(T));
+        }
+
         public void DeleteEntityOnNextTick(int entityId)
         {
             _entityDeleteQueue.Add(entityId);
