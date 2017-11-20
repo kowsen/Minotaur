@@ -23,6 +23,10 @@ namespace Minotaur
         {
             return Entities.CreateEntity();
         }
+        protected EntitySet GetEntities(BitSet signature)
+        {
+            return Entities.GetEntities(signature);
+        }
         protected EntitySet GetEntities()
         {
             return Entities.GetEntities(Signature);
@@ -35,7 +39,6 @@ namespace Minotaur
 
     public abstract class GameSystem<T>
     {
-        public BitSet Signature;
         protected T Game;
         private EntityComponentManager Entities;
 
@@ -52,9 +55,9 @@ namespace Minotaur
         {
             return Entities.CreateEntity();
         }
-        public EntitySet GetEntities()
+        protected EntitySet GetEntities(BitSet signature)
         {
-            return Entities.GetEntities(Signature);
+            return Entities.GetEntities(signature);
         }
         public virtual void Update(TimeSpan time) { }
         public virtual void Draw(TimeSpan time) { }
