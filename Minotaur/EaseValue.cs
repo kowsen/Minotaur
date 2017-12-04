@@ -9,8 +9,11 @@ namespace Minotaur
         private static List<EaseValue> _allVals = new List<EaseValue>();
 
         private float _val;
-        private float _increment;
+        private float _diff;
+        private float _target;
         private int _ticks;
+        private int _totalTicks;
+        private EaseMode _mode;
 
         public EaseValue() : this(0) { }
 
@@ -25,7 +28,7 @@ namespace Minotaur
             return _val;
         }
 
-        public void Set(float val, int frames, ConflictMode mode = ConflictMode.OVERRIDE)
+        public void Set(float val, int frames, EaseMode mode = EaseMode.LINEAR)
         {
             if (frames == 0)
             {
@@ -33,15 +36,21 @@ namespace Minotaur
             }
             else
             {
-                _increment = (val - _val) / frames;
-                _ticks = frames;
+                _target = val;
+                _diff = _val - _target;
+                _ticks = 0;
+                _totalTicks = frames;
+                _mode = mode;
             }
         }
 
         public void Reset(float val)
         {
-            _increment = 0;
+            _diff = 0;
+            _totalTicks = 0;
             _ticks = 0;
+            _target = 0;
+            _mode = 0;
             _val = val;
         }
 
@@ -50,39 +59,62 @@ namespace Minotaur
             _allVals.Remove(this);
         }
 
-        public void Update()
+        public void Update(TimeSpan time)
         {
-            if (_ticks > 0)
+            if (_ticks < _totalTicks)
             {
-                _val += _increment;
-                _ticks--;
-            }
-        }
-
-        public static void UpdateAll()
-        {
-            for (var i = 0; i < _allVals.Count; i++)
-            {
-                _allVals[i].Update();
-            }
-            for (var i = 0; i < Actions.Count; i++)
-            {
-                var action = Actions[i];
-                action.FramesLeft--;
-                if (action.FramesLeft == 0)
+                _ticks++;
+                if (_ticks >= _totalTicks)
                 {
-                    action.Act.Invoke();
-                    Actions.Remove(action);
-                    i--;
+                    _val = _target;
+                }
+                else
+                {
+                    _val = _target + (_diff * (1 - GetTime()));
                 }
             }
         }
 
-        private static List<DeferredAction> Actions = new List<DeferredAction>();
-
-        public static void DeferAction(Action action, int frames)
+        public float GetVelocity()
         {
-            Actions.Add(new DeferredAction(action, frames));
+            if (_ticks >= _totalTicks)
+            {
+                return 0;
+            }
+            return _diff * (GetTime() - GetTime(_ticks + 1));
+        }
+
+        private float GetTime()
+        {
+            return GetTime(_ticks);
+        }
+
+        private float GetTime(float ticks)
+        {
+            var t = 1f * ticks / _totalTicks;
+            if (_mode == EaseMode.LINEAR)
+            {
+                return t;
+            }
+            else if (_mode == EaseMode.QUAD_OUT)
+            {
+                return t * (2 - t);
+            }
+            return t;
+        }
+
+        public static void UpdateAll(TimeSpan time)
+        {
+            for (var i = 0; i < _allVals.Count; i++)
+            {
+                _allVals[i].Update(time);
+            }
+        }
+
+        public enum EaseMode
+        {
+            LINEAR,
+            QUAD_OUT
         }
 
         public enum ConflictMode
@@ -90,18 +122,6 @@ namespace Minotaur
             IGNORE,
             OVERRIDE,
             WAIT
-        }
-    }
-
-    public class DeferredAction
-    {
-        public Action Act;
-        public int FramesLeft;
-
-        public DeferredAction(Action act, int frames)
-        {
-            Act = act;
-            FramesLeft = frames;
         }
     }
 }

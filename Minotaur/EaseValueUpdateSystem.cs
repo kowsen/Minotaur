@@ -8,7 +8,7 @@ namespace Minotaur
     {
         public override void Update(TimeSpan time)
         {
-            EaseValue.UpdateAll();
+            EaseValue.UpdateAll(time);
         }
     }
 }
