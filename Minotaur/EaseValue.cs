@@ -75,6 +75,11 @@ namespace Minotaur
             }
         }
 
+        public bool IsChanging()
+        {
+            return _ticks < _totalTicks;
+        }
+
         public float GetVelocity()
         {
             if (_ticks >= _totalTicks)
