@@ -35,6 +35,14 @@ namespace Minotaur
         {
             Errand<T>.Run(errand, Game);
         }
+        protected void RunErrandSpawner<U>(U errandSpawner) where U : ErrandSpawner<T>
+        {
+            ErrandSpawner<T>.Run(errandSpawner, Game);
+        }
+        protected bool IsErrandRunning<U>() where U : Errand<T>
+        {
+            return Errand<T>.IsRunning<U>();
+        }
         public virtual void Update(TimeSpan time, Entity entity) { }
         public virtual void Update(TimeSpan time, EntitySet entities) { }
         public virtual void Draw(TimeSpan time, Entity entity) { }
@@ -66,6 +74,14 @@ namespace Minotaur
         protected void RunErrand<U>(U errand) where U : Errand<T>
         {
             Errand<T>.Run(errand, Game);
+        }
+        protected void RunErrandSpawner<U>(U errandSpawner) where U : ErrandSpawner<T>
+        {
+            ErrandSpawner<T>.Run(errandSpawner, Game);
+        }
+        protected bool IsErrandRunning<U>() where U : Errand<T>
+        {
+            return Errand<T>.IsRunning<U>();
         }
         public virtual void Update(TimeSpan time) { }
         public virtual void Draw(TimeSpan time) { }

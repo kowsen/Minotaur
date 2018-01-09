@@ -12,7 +12,7 @@ namespace Minotaur
         public static void Run<U>(U errand, T game) where U : Errand<T>
         {
             var type = typeof(U);
-            CancelType(type);
+            CancelType(type, false);
             for (var i = 0; i < errand.ToCancel.Count; i++)
             {
                 CancelType(errand.ToCancel[i]);
@@ -22,12 +22,17 @@ namespace Minotaur
             errand.OnBegin();
         }
 
-        private static void CancelType(Type type)
+        public static bool IsRunning<U>() where U : Errand<T>
+        {
+            return _errands.ContainsKey(typeof(U));
+        }
+
+        private static void CancelType(Type type, bool removeFromAll = true)
         {
             var success = _errands.TryGetValue(type, out var errand);
             if (success)
             {
-                errand.End(true);
+                errand.End(true, removeFromAll);
             }
         }
 
@@ -62,10 +67,31 @@ namespace Minotaur
         public virtual void Update(TimeSpan time) { }
         public virtual void OnEnd(bool isCancelled) { }
 
-        public void End(bool isCancelled = false)
+        public void End(bool isCancelled = false, bool removeFromAll = true)
         {
-            _typesToRemove.Add(GetType());
+            if (removeFromAll)
+            {
+                _typesToRemove.Add(GetType());
+            }
             OnEnd(isCancelled);
         }
+    }
+
+    public class ErrandSpawner<T>
+    {
+        public static void Run<U>(U errandSpawner, T game) where U : ErrandSpawner<T>
+        {
+            errandSpawner.Game = game;
+            errandSpawner.OnRun();
+        }
+
+        protected void RunErrand<U>(U errand) where U : Errand<T>
+        {
+            Errand<T>.Run(errand, Game);
+        }
+
+        protected T Game;
+
+        public virtual void OnRun() { }
     }
 }
