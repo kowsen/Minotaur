@@ -52,6 +52,7 @@ namespace Minotaur
         public void Update(TimeSpan time)
         {
             Systems.Update(time);
+            Errand<T>.UpdateAll(time);
         }
 
         public void Draw(TimeSpan time)
