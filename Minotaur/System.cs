@@ -31,9 +31,9 @@ namespace Minotaur
         {
             return Entities.GetEntities(Signature);
         }
-        protected void RunErrand<U>(U errand) where U : Errand<T>
+        protected U RunErrand<U>() where U : Errand<T>
         {
-            Errand<T>.Run(errand, Game);
+            return Errand<T>.Run<U>(Game);
         }
         protected void RunErrandSpawner<U>(U errandSpawner) where U : ErrandSpawner<T>
         {
@@ -71,9 +71,9 @@ namespace Minotaur
         {
             return Entities.GetEntities(signature);
         }
-        protected void RunErrand<U>(U errand) where U : Errand<T>
+        protected U RunErrand<U>() where U : Errand<T>
         {
-            Errand<T>.Run(errand, Game);
+            return Errand<T>.Run<U>(Game);
         }
         protected void RunErrandSpawner<U>(U errandSpawner) where U : ErrandSpawner<T>
         {

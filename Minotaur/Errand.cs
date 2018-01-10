@@ -7,32 +7,32 @@ namespace Minotaur
     public class Errand<T>
     {
         private static Dictionary<Type, Errand<T>> _errands = new Dictionary<Type, Errand<T>>();
-        private static List<Type> _typesToRemove = new List<Type>();
 
-        public static void Run<U>(U errand, T game) where U : Errand<T>
+        public static U Run<U>(T game) where U : Errand<T>
         {
             var type = typeof(U);
-            CancelType(type, false);
+            CancelType(type);
+            var errand = _errands.ContainsKey(type) ? (U)_errands[type] : (U)Activator.CreateInstance(type);
             for (var i = 0; i < errand.ToCancel.Count; i++)
             {
                 CancelType(errand.ToCancel[i]);
             }
             _errands[type] = errand;
             errand.Game = game;
-            errand.OnBegin();
+            return errand;
         }
 
         public static bool IsRunning<U>() where U : Errand<T>
         {
-            return _errands.ContainsKey(typeof(U));
+            return _errands.ContainsKey(typeof(U)) && _errands[typeof(U)]._isActive;
         }
 
-        private static void CancelType(Type type, bool removeFromAll = true)
+        private static void CancelType(Type type)
         {
             var success = _errands.TryGetValue(type, out var errand);
             if (success)
             {
-                errand.End(true, removeFromAll);
+                errand.End(true);
             }
         }
 
@@ -40,13 +40,11 @@ namespace Minotaur
         {
             foreach (var errand in _errands)
             {
-                errand.Value.Update(time);
+                if (errand.Value._isActive)
+                {
+                    errand.Value.Update(time);
+                }
             }
-            foreach (var type in _typesToRemove)
-            {
-                _errands.Remove(type);
-            }
-            _typesToRemove.Clear();
         }
 
         public static void Clear()
@@ -62,17 +60,21 @@ namespace Minotaur
         }
 
         protected T Game;
+        private bool _isActive;
+
+        public void Begin()
+        {
+            _isActive = true;
+            OnBegin();
+        }
 
         public virtual void OnBegin() { }
         public virtual void Update(TimeSpan time) { }
         public virtual void OnEnd(bool isCancelled) { }
 
-        public void End(bool isCancelled = false, bool removeFromAll = true)
+        public void End(bool isCancelled = false)
         {
-            if (removeFromAll)
-            {
-                _typesToRemove.Add(GetType());
-            }
+            _isActive = false;
             OnEnd(isCancelled);
         }
     }
@@ -85,9 +87,9 @@ namespace Minotaur
             errandSpawner.OnRun();
         }
 
-        protected void RunErrand<U>(U errand) where U : Errand<T>
+        protected U RunErrand<U>() where U : Errand<T>
         {
-            Errand<T>.Run(errand, Game);
+            return Errand<T>.Run<U>(Game);
         }
 
         protected T Game;
