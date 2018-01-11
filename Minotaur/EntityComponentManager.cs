@@ -113,7 +113,7 @@ namespace Minotaur
             }
         }
 
-        public T GetComponent<T>(int entityId)
+        public T GetComponent<T>(int entityId) where T : IComponent
         {
             var success = _entityComponentMap.TryGetValue(entityId, out var components);
             if (!success)
