@@ -6,30 +6,30 @@ namespace Minotaur
 {
     public class EventBus<T>
     {
-        private Dictionary<T, List<Action<EventBusArgs>>> _callbacks;
+        private Dictionary<T, List<Action<IEventBusArgs>>> _callbacks;
 
         public EventBus()
         {
-            _callbacks = new Dictionary<T, List<Action<EventBusArgs>>>();
+            _callbacks = new Dictionary<T, List<Action<IEventBusArgs>>>();
         }
 
-        public void Register(T name, Action<EventBusArgs> cb)
+        public void Register(T name, Action<IEventBusArgs> cb)
         {
             var success = _callbacks.TryGetValue(name, out var callbacks);
             if (!success)
             {
-                callbacks = new List<Action<EventBusArgs>>();
+                callbacks = new List<Action<IEventBusArgs>>();
                 _callbacks[name] = callbacks;
             }
             callbacks.Add(cb);
         }
 
-        public void Remove(T name, Action<EventBusArgs> cb)
+        public void Remove(T name, Action<IEventBusArgs> cb)
         {
             _callbacks[name].Remove(cb);
         }
 
-        public void Notify(T name, EventBusArgs arg = null)
+        public void Notify(T name, IEventBusArgs arg = null)
         {
             var success = _callbacks.TryGetValue(name, out var callbacks);
             if (success)
@@ -42,11 +42,5 @@ namespace Minotaur
         }
     }
 
-    public class EventBusArgs
-    {
-        public U Unpack<U>() where U : EventBusArgs
-        {
-            return (U)this;
-        }
-    }
+    public interface IEventBusArgs { }
 }
