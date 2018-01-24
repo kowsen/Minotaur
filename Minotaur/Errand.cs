@@ -27,6 +27,14 @@ namespace Minotaur
             return _errands.ContainsKey(typeof(U)) && _errands[typeof(U)]._isActive;
         }
 
+        public static void Cancel<U>() where U : Errand<T>
+        {
+            if (_errands.ContainsKey(typeof(U)))
+            {
+                _errands[typeof(U)].End(true);
+            }
+        }
+
         private static void CancelType(Type type)
         {
             var success = _errands.TryGetValue(type, out var errand);

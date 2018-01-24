@@ -43,6 +43,10 @@ namespace Minotaur
         {
             return Errand<T>.IsRunning<U>();
         }
+        protected void CancelErrand<U>() where U : Errand<T>
+        {
+            Errand<T>.Cancel<U>();
+        }
         public virtual void Update(TimeSpan time, Entity entity) { }
         public virtual void Update(TimeSpan time, EntitySet entities) { }
         public virtual void Draw(TimeSpan time, Entity entity) { }
@@ -82,6 +86,10 @@ namespace Minotaur
         protected bool IsErrandRunning<U>() where U : Errand<T>
         {
             return Errand<T>.IsRunning<U>();
+        }
+        protected void CancelErrand<U>() where U : Errand<T>
+        {
+            Errand<T>.Cancel<U>();
         }
         public virtual void Update(TimeSpan time) { }
         public virtual void Draw(TimeSpan time) { }
