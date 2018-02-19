@@ -4,7 +4,13 @@ using System.Text;
 
 namespace Minotaur
 {
-    public interface IComponent
+    public abstract class IComponent
     {
+        public int EntityId { get; private set; }
+
+        public void Attach(int id)
+        {
+            EntityId = id;
+        }
     }
 }

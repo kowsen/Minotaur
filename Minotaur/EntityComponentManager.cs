@@ -62,6 +62,7 @@ namespace Minotaur
                 throw new Exception($"Inserting duplicate component into entity with Id {entityId}");
             }
 
+            component.Attach(entityId);
             components[type] = component;
 
             // update matchers

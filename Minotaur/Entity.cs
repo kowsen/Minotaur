@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 
 namespace Minotaur
 {
-    public class Entity : IEquatable<Entity>
+    public struct Entity : IEquatable<Entity>
     {
+        public static Entity Default = new Entity(-1, null);
+
         public int Id { get; private set; }
         private EntityComponentManager _ecs;
 
@@ -58,6 +61,11 @@ namespace Minotaur
         public bool Equals(Entity other)
         {
             return Id == other.Id;
+        }
+
+        public override int GetHashCode()
+        {
+            return Id.GetHashCode();
         }
     }
 }
