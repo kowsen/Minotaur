@@ -18,14 +18,14 @@ namespace Minotaur
             _ecs = ecs;
         }
 
+        public void AddComponentImmediately<T>(T component) where T : IComponent
+        {
+            _ecs.AddComponentImmediately(Id, component);
+        }
+
         public void AddComponent<T>(T component) where T : IComponent
         {
             _ecs.AddComponent(Id, component);
-        }
-
-        public void AddComponentOnNextTick<T>(T component) where T : IComponent
-        {
-            _ecs.AddComponentOnNextTick(Id, component);
         }
 
         public T GetComponent<T>() where T : IComponent
@@ -38,24 +38,24 @@ namespace Minotaur
             return _ecs.HasComponent<T>(Id);
         }
 
-        public void RemoveComponent(Type type)
+        public void RemoveComponentImmediately<T>() where T : IComponent
         {
-            _ecs.RemoveComponent(Id, type);
+            _ecs.RemoveComponentImmediately<T>(Id);
         }
 
-        public void RemoveComponentOnNextTick(Type type)
+        public void RemoveComponent<T>() where T : IComponent
         {
-            _ecs.RemoveComponentOnNextTick(Id, type);
+            _ecs.RemoveComponent<T>(Id);
+        }
+
+        public void DeleteImmediately()
+        {
+            _ecs.DeleteEntityImmediately(Id);
         }
 
         public void Delete()
         {
             _ecs.DeleteEntity(Id);
-        }
-
-        public void DeleteOnNextTick()
-        {
-            _ecs.DeleteEntityOnNextTick(Id);
         }
 
         public bool Equals(Entity other)

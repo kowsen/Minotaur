@@ -33,12 +33,12 @@ namespace Minotaur
             return _entityFactory.Create();
         }
 
-        public void AddComponentOnNextTick<T>(int entityId, T component) where T : IComponent
+        public void AddComponent<T>(int entityId, T component) where T : IComponent
         {
             _addQueue.Add(new Tuple<int, IComponent, Type>(entityId, component, typeof(T)));
         }
 
-        public void AddComponent<T>(int entityId, T component) where T : IComponent
+        public void AddComponentImmediately<T>(int entityId, T component) where T : IComponent
         {
             AddComponentWithConcreteType(entityId, component, typeof(T));
         }
@@ -82,12 +82,18 @@ namespace Minotaur
             }
         }
 
-        public void RemoveComponentOnNextTick(int entityId, Type type)
+        public void RemoveComponent<T>(int entityId) where T : IComponent
         {
+            var type = typeof(T);
             _removalQueue.Add(new Tuple<int, Type>(entityId, type));
         }
 
-        public void RemoveComponent(int entityId, Type type)
+        public void RemoveComponentImmediately<T>(int entityId) where T : IComponent
+        {
+            RemoveComponentWithConcreteType(entityId, typeof(T));
+        }
+
+        public void RemoveComponentWithConcreteType(int entityId, Type type)
         {
             var success = _entityComponentMap.TryGetValue(entityId, out var components);
             if (!success)
@@ -142,12 +148,12 @@ namespace Minotaur
             return components.ContainsKey(typeof(T));
         }
 
-        public void DeleteEntityOnNextTick(int entityId)
+        public void DeleteEntity(int entityId)
         {
             _entityDeleteQueue.Add(entityId);
         }
 
-        public void DeleteEntity(int entityId)
+        public void DeleteEntityImmediately(int entityId)
         {
             var success = _entityComponentMap.Remove(entityId);
             if (!success)
@@ -175,11 +181,11 @@ namespace Minotaur
             }
             for (var i = 0; i < _removalQueue.Count; i++)
             {
-                RemoveComponent(_removalQueue[i].Item1, _removalQueue[i].Item2);
+                RemoveComponentWithConcreteType(_removalQueue[i].Item1, _removalQueue[i].Item2);
             }
             for (var i = 0; i < _entityDeleteQueue.Count; i++)
             {
-                DeleteEntity(_entityDeleteQueue[i]);
+                DeleteEntityImmediately(_entityDeleteQueue[i]);
             }
             _addQueue.Clear();
             _removalQueue.Clear();
@@ -206,6 +212,19 @@ namespace Minotaur
                 _matchers[signature] = entities;
             }
             return entities;
+        }
+
+        public Entity GetEntityById(int id)
+        {
+            var success = _entities.TryGetValue(id, out var entity);
+            if (success)
+            {
+                return entity;
+            }
+            else
+            {
+                return Entity.Default;
+            }
         }
 
         private bool DoesEntityMatchSignature(int entityId, BitSet signature)

@@ -31,6 +31,10 @@ namespace Minotaur
         {
             return Entities.GetEntities(Signature);
         }
+        protected Entity GetEntityById(int id)
+        {
+            return Entities.GetEntityById(id);
+        }
         protected U RunErrand<U>() where U : Errand<T>
         {
             return Errand<T>.Run<U>(Game);
@@ -74,6 +78,10 @@ namespace Minotaur
         protected EntitySet GetEntities(BitSet signature)
         {
             return Entities.GetEntities(signature);
+        }
+        protected Entity GetEntityById(int id)
+        {
+            return Entities.GetEntityById(id);
         }
         protected U RunErrand<U>() where U : Errand<T>
         {
