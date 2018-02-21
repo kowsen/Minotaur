@@ -58,12 +58,12 @@ namespace Minotaur
 
         public void DeleteImmediately()
         {
-            _ecs.DeleteEntityImmediately(Id);
+            _ecs.DeleteImmediately(Id);
         }
 
         public void Delete()
         {
-            _ecs.DeleteEntity(Id);
+            _ecs.Delete(Id);
         }
 
         public bool Equals(Entity other)

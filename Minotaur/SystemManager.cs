@@ -69,7 +69,7 @@ namespace Minotaur
             for (var i = 0; i < _entitySystems.Count; i++)
             {
                 var system = _entitySystems[i];
-                var entities = _ecs.GetEntities(system.Signature);
+                var entities = _ecs.Get(system.Signature);
                 if (entities.Entities.Count > 0)
                 {
                     system.Update(time, entities);
@@ -80,7 +80,7 @@ namespace Minotaur
                 }
             }
 
-            _ecs.ProcessAddRemovalQueue();
+            _ecs.CommitComponentChanges();
         }
 
         public void Draw(TimeSpan time)
@@ -93,7 +93,7 @@ namespace Minotaur
             for (var i = 0; i < _entitySystems.Count; i++)
             {
                 var system = _entitySystems[i];
-                var entities = _ecs.GetEntities(system.Signature);
+                var entities = _ecs.Get(system.Signature);
                 if (entities.Entities.Count > 0)
                 {
                     system.Draw(time, entities);
@@ -104,7 +104,7 @@ namespace Minotaur
                 }
             }
 
-            _ecs.ProcessAddRemovalQueue();
+            _ecs.CommitComponentChanges();
         }
     }
 }

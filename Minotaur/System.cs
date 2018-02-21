@@ -8,7 +8,7 @@ namespace Minotaur
     {
         public BitSet Signature;
         protected T Game;
-        private EntityComponentManager Entities;
+        protected EntityComponentManager Entities;
 
         public void Attach(T game, EntityComponentManager ecm)
         {
@@ -19,26 +19,6 @@ namespace Minotaur
         public virtual void Initialize() { }
         public virtual void OnActivate() { }
         public virtual void OnDeactivate() { }
-        protected Entity CreateEntity()
-        {
-            return Entities.CreateEntity();
-        }
-        protected EntitySet GetEntities(BitSet signature)
-        {
-            return Entities.GetEntities(signature);
-        }
-        protected EntitySet GetEntities()
-        {
-            return Entities.GetEntities(Signature);
-        }
-        protected Entity GetEntityById(int id)
-        {
-            return Entities.GetEntityById(id);
-        }
-        protected void CommitEntities()
-        {
-            Entities.ProcessAddRemovalQueue();
-        }
         protected U RunErrand<U>() where U : Errand<T>
         {
             return Errand<T>.Run<U>(Game);
@@ -64,7 +44,7 @@ namespace Minotaur
     public abstract class GameSystem<T>
     {
         protected T Game;
-        private EntityComponentManager Entities;
+        protected EntityComponentManager Entities;
 
         public void Attach(T game, EntityComponentManager ecm)
         {
@@ -75,22 +55,6 @@ namespace Minotaur
         public virtual void Initialize() { }
         public virtual void OnActivate() { }
         public virtual void OnDeactivate() { }
-        protected Entity CreateEntity()
-        {
-            return Entities.CreateEntity();
-        }
-        protected EntitySet GetEntities(BitSet signature)
-        {
-            return Entities.GetEntities(signature);
-        }
-        protected Entity GetEntityById(int id)
-        {
-            return Entities.GetEntityById(id);
-        }
-        protected void CommitEntities()
-        {
-            Entities.ProcessAddRemovalQueue();
-        }
         protected U RunErrand<U>() where U : Errand<T>
         {
             return Errand<T>.Run<U>(Game);

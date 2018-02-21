@@ -22,7 +22,7 @@ namespace Minotaur
         {
             var combinedSignature = otherSignature.Clone();
             combinedSignature.Or(_signature);
-            return _ecm.GetEntities(combinedSignature);
+            return _ecm.Get(combinedSignature);
         }
 
         public void RemoveComponentFromAll<T>() where T : IComponent

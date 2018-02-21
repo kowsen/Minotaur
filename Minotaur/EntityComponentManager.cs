@@ -28,7 +28,7 @@ namespace Minotaur
             _entityFactory = new EntityFactory(this);
         }
 
-        public Entity CreateEntity()
+        public Entity Create()
         {
             return _entityFactory.Create();
         }
@@ -148,12 +148,12 @@ namespace Minotaur
             return components.ContainsKey(typeof(T));
         }
 
-        public void DeleteEntity(int entityId)
+        public void Delete(int entityId)
         {
             _entityDeleteQueue.Add(entityId);
         }
 
-        public void DeleteEntityImmediately(int entityId)
+        public void DeleteImmediately(int entityId)
         {
             var success = _entityComponentMap.Remove(entityId);
             if (!success)
@@ -173,7 +173,7 @@ namespace Minotaur
             _entities.Remove(entityId);
         }
 
-        public void ProcessAddRemovalQueue()
+        public void CommitComponentChanges()
         {
             for (var i = 0; i < _addQueue.Count; i++)
             {
@@ -185,14 +185,14 @@ namespace Minotaur
             }
             for (var i = 0; i < _entityDeleteQueue.Count; i++)
             {
-                DeleteEntityImmediately(_entityDeleteQueue[i]);
+                DeleteImmediately(_entityDeleteQueue[i]);
             }
             _addQueue.Clear();
             _removalQueue.Clear();
             _entityDeleteQueue.Clear();
         }
 
-        public EntitySet GetEntities(BitSet signature)
+        public EntitySet Get(BitSet signature)
         {
             var success = _matchers.TryGetValue(signature, out var entities);
             if (!success)
@@ -214,7 +214,7 @@ namespace Minotaur
             return entities;
         }
 
-        public Entity GetEntityById(int id)
+        public Entity GetById(int id)
         {
             var success = _entities.TryGetValue(id, out var entity);
             if (success)
