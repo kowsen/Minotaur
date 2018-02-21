@@ -12,13 +12,18 @@ namespace Minotaur
         {
             var type = typeof(U);
             CancelType(type);
-            var errand = _errands.ContainsKey(type) ? (U)_errands[type] : (U)Activator.CreateInstance(type);
+            var isNewErrand = !_errands.ContainsKey(type);
+            var errand = isNewErrand ? (U)Activator.CreateInstance(type) : (U)_errands[type];
             for (var i = 0; i < errand.ToCancel.Count; i++)
             {
                 CancelType(errand.ToCancel[i]);
             }
             _errands[type] = errand;
             errand.Game = game;
+            if (isNewErrand)
+            {
+                errand.OnCreate();
+            }
             return errand;
         }
 
@@ -57,6 +62,10 @@ namespace Minotaur
 
         public static void Clear()
         {
+            foreach (var errand in _errands)
+            {
+                errand.Value.OnDispose();
+            }
             _errands.Clear();
         }
 
@@ -79,6 +88,9 @@ namespace Minotaur
         public virtual void OnBegin() { }
         public virtual void Update(TimeSpan time) { }
         public virtual void OnEnd(bool isCancelled) { }
+
+        public virtual void OnCreate() { }
+        public virtual void OnDispose() { }
 
         public void End(bool isCancelled = false)
         {

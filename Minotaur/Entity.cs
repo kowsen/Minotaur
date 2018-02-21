@@ -23,8 +23,12 @@ namespace Minotaur
             _ecs.AddComponentImmediately(Id, component);
         }
 
-        public void AddComponent<T>(T component) where T : IComponent
+        public void AddComponent<T>(T component, bool ignoreIfExists = false) where T : IComponent
         {
+            if (ignoreIfExists && HasComponent<T>())
+            {
+                return;
+            }
             _ecs.AddComponent(Id, component);
         }
 
@@ -43,8 +47,12 @@ namespace Minotaur
             _ecs.RemoveComponentImmediately<T>(Id);
         }
 
-        public void RemoveComponent<T>() where T : IComponent
+        public void RemoveComponent<T>(bool ignoreIfDoesntExist = false) where T : IComponent
         {
+            if (ignoreIfDoesntExist && !HasComponent<T>())
+            {
+                return;
+            }
             _ecs.RemoveComponent<T>(Id);
         }
 

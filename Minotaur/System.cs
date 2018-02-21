@@ -35,6 +35,10 @@ namespace Minotaur
         {
             return Entities.GetEntityById(id);
         }
+        protected void CommitEntities()
+        {
+            Entities.ProcessAddRemovalQueue();
+        }
         protected U RunErrand<U>() where U : Errand<T>
         {
             return Errand<T>.Run<U>(Game);
@@ -82,6 +86,10 @@ namespace Minotaur
         protected Entity GetEntityById(int id)
         {
             return Entities.GetEntityById(id);
+        }
+        protected void CommitEntities()
+        {
+            Entities.ProcessAddRemovalQueue();
         }
         protected U RunErrand<U>() where U : Errand<T>
         {
