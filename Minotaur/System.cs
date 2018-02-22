@@ -9,32 +9,19 @@ namespace Minotaur
         public BitSet Signature;
         protected T Game;
         protected EntityComponentManager Entities;
+        protected ErrandManager<T> Errands;
 
-        public void Attach(T game, EntityComponentManager ecm)
+        public void Attach(T game, EntityComponentManager ecm, ErrandManager<T> errands)
         {
             Game = game;
             Entities = ecm;
+            Errands = errands;
         }
 
         public virtual void Initialize() { }
         public virtual void OnActivate() { }
         public virtual void OnDeactivate() { }
-        protected U RunErrand<U>() where U : Errand<T>
-        {
-            return Errand<T>.Run<U>(Game);
-        }
-        protected void RunErrandSpawner<U>(U errandSpawner) where U : ErrandSpawner<T>
-        {
-            ErrandSpawner<T>.Run(errandSpawner, Game);
-        }
-        protected bool IsErrandRunning<U>() where U : Errand<T>
-        {
-            return Errand<T>.IsRunning<U>();
-        }
-        protected void CancelErrand<U>() where U : Errand<T>
-        {
-            Errand<T>.Cancel<U>();
-        }
+
         public virtual void Update(TimeSpan time, Entity entity) { }
         public virtual void Update(TimeSpan time, EntitySet entities) { }
         public virtual void Draw(TimeSpan time, Entity entity) { }
@@ -45,32 +32,19 @@ namespace Minotaur
     {
         protected T Game;
         protected EntityComponentManager Entities;
+        protected ErrandManager<T> Errands;
 
-        public void Attach(T game, EntityComponentManager ecm)
+        public void Attach(T game, EntityComponentManager ecm, ErrandManager<T> errands)
         {
             Game = game;
             Entities = ecm;
+            Errands = errands;
         }
 
         public virtual void Initialize() { }
         public virtual void OnActivate() { }
         public virtual void OnDeactivate() { }
-        protected U RunErrand<U>() where U : Errand<T>
-        {
-            return Errand<T>.Run<U>(Game);
-        }
-        protected void RunErrandSpawner<U>(U errandSpawner) where U : ErrandSpawner<T>
-        {
-            ErrandSpawner<T>.Run(errandSpawner, Game);
-        }
-        protected bool IsErrandRunning<U>() where U : Errand<T>
-        {
-            return Errand<T>.IsRunning<U>();
-        }
-        protected void CancelErrand<U>() where U : Errand<T>
-        {
-            Errand<T>.Cancel<U>();
-        }
+
         public virtual void Update(TimeSpan time) { }
         public virtual void Draw(TimeSpan time) { }
     }

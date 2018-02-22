@@ -78,7 +78,6 @@ namespace Minotaur
             {
                 scene.Reset();
             }
-            Errand<T>.Clear();
         }
 
         public void Update(TimeSpan time)

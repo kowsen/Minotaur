@@ -8,14 +8,16 @@ namespace Minotaur
     public class SystemManager<T>
     {
         private EntityComponentManager _ecs;
+        private ErrandManager<T> _errands;
         private List<EntitySystem<T>> _entitySystems;
         private List<GameSystem<T>> _gameSystems;
 
         private T _game;
 
-        public SystemManager(EntityComponentManager ecs, T game)
+        public SystemManager(EntityComponentManager ecs, ErrandManager<T> errands, T game)
         {
             _ecs = ecs;
+            _errands = errands;
             _entitySystems = new List<EntitySystem<T>>();
             _gameSystems = new List<GameSystem<T>>();
             _game = game;
@@ -23,14 +25,14 @@ namespace Minotaur
 
         public void AddSystem(EntitySystem<T> system)
         {
-            system.Attach(_game, _ecs);
+            system.Attach(_game, _ecs, _errands);
             _entitySystems.Add(system);
             system.Initialize();
         }
 
         public void AddSystem(GameSystem<T> system)
         {
-            system.Attach(_game, _ecs);
+            system.Attach(_game, _ecs, _errands);
             _gameSystems.Add(system);
             system.Initialize();
         }

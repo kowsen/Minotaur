@@ -8,6 +8,7 @@ namespace Minotaur
     {
         protected EntityComponentManager Entities;
         protected SystemManager<T> Systems;
+        protected ErrandManager<T> Errands;
 
         protected T Game;
 
@@ -39,6 +40,8 @@ namespace Minotaur
 
         public void Reset()
         {
+            Errands?.Clear();
+
             ResetECS();
             Initialize();
         }
@@ -46,13 +49,14 @@ namespace Minotaur
         private void ResetECS()
         {
             Entities = new EntityComponentManager();
-            Systems = new SystemManager<T>(Entities, Game);
+            Errands = new ErrandManager<T>(Game);
+            Systems = new SystemManager<T>(Entities, Errands, Game);
         }
 
         public void Update(TimeSpan time)
         {
             Systems.Update(time);
-            Errand<T>.UpdateAll(time);
+            Errands.Update(time);
         }
 
         public void Draw(TimeSpan time)
