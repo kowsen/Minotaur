@@ -227,6 +227,11 @@ namespace Minotaur
             }
         }
 
+        public bool IsValid(int id)
+        {
+            return _entities.ContainsKey(id);
+        }
+
         private bool DoesEntityMatchSignature(int entityId, BitSet signature)
         {
             var components = _entityComponentMap[entityId];

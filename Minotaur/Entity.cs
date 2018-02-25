@@ -66,6 +66,11 @@ namespace Minotaur
             _ecs.Delete(Id);
         }
 
+        public bool IsValid()
+        {
+            return _ecs.IsValid(Id);
+        }
+
         public bool Equals(Entity other)
         {
             return Id == other.Id;

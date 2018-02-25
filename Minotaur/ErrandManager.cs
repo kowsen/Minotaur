@@ -88,20 +88,18 @@ namespace Minotaur
 
         public void Cancel<U>(U value) where U : Errand<T>, new()
         {
-            value.OnEnd(true);
+            value.End(true);
         }
 
         public void CancelAll<U>() where U : Errand<T>, new()
         {
             var isInitialized = _errands.TryGetValue(typeof(U), out var errands);
-            if (!isInitialized)
+            if (isInitialized)
             {
-                throw new Exception($"Trying to cancel all nonexistant errand with type {typeof(U)}");
-            }
-
-            while (errands.Count > 0)
-            {
-                Cancel((U)errands[0]);
+                foreach (var errand in errands)
+                {
+                    errand.End(true);
+                }
             }
         }
 
