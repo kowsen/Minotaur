@@ -61,7 +61,9 @@ namespace Minotaur
 
         public void Draw(TimeSpan time)
         {
+            Errands.Draw(time, Errand<T>.DrawStatus.BEFORE);
             Systems.Draw(time);
+            Errands.Draw(time, Errand<T>.DrawStatus.AFTER);
         }
     }
 }

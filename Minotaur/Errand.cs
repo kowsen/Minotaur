@@ -6,6 +6,7 @@ namespace Minotaur
 {
     public abstract class Errand<T>
     {
+        public DrawStatus DrawOrder { get; protected set; } = DrawStatus.NONE;
         protected ErrandManager<T> Errands;
         protected T Game;
 
@@ -18,12 +19,20 @@ namespace Minotaur
 
         public virtual void OnCreate() { }
         public virtual void Update(TimeSpan time) { }
+        public virtual void Draw(TimeSpan time) { }
         public virtual void OnEnd(bool isCancelled) { }
 
         public void End(bool isCancelled = false)
         {
             OnEnd(isCancelled);
             Errands.Remove(this, GetType());
+        }
+
+        public enum DrawStatus
+        {
+            NONE,
+            BEFORE,
+            AFTER
         }
     }
 }

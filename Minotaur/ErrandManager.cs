@@ -117,6 +117,23 @@ namespace Minotaur
             CommitErrandChanges();
         }
 
+        public void Draw(TimeSpan time, Errand<T>.DrawStatus drawStatus)
+        {
+            foreach (var errandType in _errands)
+            {
+                foreach (var errand in errandType.Value)
+                {
+                    if (errand.DrawOrder == drawStatus)
+                    {
+                        errand.Draw(time);
+                    }
+                }
+            }
+            // Maybe I should just put CommitErrandChanges here for safety, but I
+            // stubbornly refuse to enable future me to hack in a change to my errand
+            // lists during a draw call. Take that, future Kyle!
+        }
+
         public void Clear()
         {
             foreach (var errandType in _errands)
