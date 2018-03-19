@@ -8,11 +8,13 @@ namespace Minotaur
     {
         public DrawStatus DrawOrder { get; protected set; } = DrawStatus.NONE;
         protected ErrandManager<T> Errands;
+        protected EntityComponentManager Entities;
         protected T Game;
 
-        public void Attach(ErrandManager<T> errands, T game)
+        public void Attach(ErrandManager<T> errands, EntityComponentManager entities, T game)
         {
             Errands = errands;
+            Entities = entities;
             Game = game;
             OnCreate();
         }

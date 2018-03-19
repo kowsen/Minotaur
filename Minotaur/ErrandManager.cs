@@ -6,13 +6,15 @@ namespace Minotaur
     public class ErrandManager<T>
     {
         private Dictionary<Type, List<Errand<T>>> _errands;
+        private EntityComponentManager _entities;
         private T Game;
 
         private List<Tuple<Errand<T>, Type>> _removeQueue;
         private List<Tuple<Errand<T>, Type>> _addQueue;
 
-        public ErrandManager(T game)
+        public ErrandManager(EntityComponentManager entities, T game)
         {
+            _entities = entities;
             Game = game;
             _errands = new Dictionary<Type, List<Errand<T>>>();
 
@@ -23,7 +25,7 @@ namespace Minotaur
         public U Run<U>() where U : Errand<T>, new()
         {
             var errand = ErrandFactory<T>.Get<U>();
-            errand.Attach(this, Game);
+            errand.Attach(this, _entities, Game);
             var type = typeof(U);
             _addQueue.Add(new Tuple<Errand<T>, Type>(errand, type));
             return errand;
@@ -96,9 +98,27 @@ namespace Minotaur
             var isInitialized = _errands.TryGetValue(typeof(U), out var errands);
             if (isInitialized)
             {
+                var type = typeof(U);
                 foreach (var errand in errands)
                 {
-                    errand.End(true);
+                    Remove(errand, type);
+                }
+                for (var i = 0; i < _removeQueue.Count; i++)
+                {
+                    if (_removeQueue[i].Item2.Equals(type))
+                    {
+                        _removeQueue.RemoveAt(i);
+                        i -= 1;
+                    }
+                }
+                for (var i = 0; i < _addQueue.Count; i++)
+                {
+                    if (_addQueue[i].Item2.Equals(type))
+                    {
+                        Remove(_addQueue[i].Item1, _addQueue[i].Item2);
+                        _addQueue.RemoveAt(i);
+                        i -= 1;
+                    }
                 }
             }
         }

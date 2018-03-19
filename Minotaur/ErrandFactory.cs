@@ -11,7 +11,7 @@ namespace Minotaur
         public static U Get<U>() where U : Errand<T>, new()
         {
             var doesExist = _pool.TryGetValue(typeof(U), out var queue);
-            if (doesExist)
+            if (doesExist && queue.Count > 0)
             {
                 return (U)queue.Dequeue();
             }

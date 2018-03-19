@@ -49,7 +49,7 @@ namespace Minotaur
         private void ResetECS()
         {
             Entities = new EntityComponentManager();
-            Errands = new ErrandManager<T>(Game);
+            Errands = new ErrandManager<T>(Entities, Game);
             Systems = new SystemManager<T>(Entities, Errands, Game);
         }
 

@@ -87,11 +87,6 @@ namespace Minotaur
 
         public void Draw(TimeSpan time)
         {
-            for (var i = 0; i < _gameSystems.Count; i++)
-            {
-                _gameSystems[i].Draw(time);
-            }
-
             for (var i = 0; i < _entitySystems.Count; i++)
             {
                 var system = _entitySystems[i];
@@ -104,6 +99,11 @@ namespace Minotaur
                         system.Draw(time, entities.Entities[j]);
                     }
                 }
+            }
+
+            for (var i = 0; i < _gameSystems.Count; i++)
+            {
+                _gameSystems[i].Draw(time);
             }
 
             _ecs.CommitComponentChanges();

@@ -10,6 +10,7 @@ namespace Minotaur
 
         private List<Tuple<T, Action<IEventBusArgs>>> _toAdd;
         private List<Tuple<T, Action<IEventBusArgs>>> _toRemove;
+        private List<Tuple<T, IEventBusArgs>> _toNotify;
 
         public EventBus()
         {
@@ -17,6 +18,7 @@ namespace Minotaur
 
             _toAdd = new List<Tuple<T, Action<IEventBusArgs>>>();
             _toRemove = new List<Tuple<T, Action<IEventBusArgs>>>();
+            _toNotify = new List<Tuple<T, IEventBusArgs>>();
         }
 
         public void Register(T name, Action<IEventBusArgs> cb)
@@ -55,8 +57,11 @@ namespace Minotaur
             _toRemove.Clear();
         }
 
-        public void Notify(T name, IEventBusArgs arg = null)
+        private bool isNotifying = false;
+
+        private void NotifyImmediately(T name, IEventBusArgs arg = null)
         {
+            isNotifying = true;
             CommitCallbackChanges();
             var success = _callbacks.TryGetValue(name, out var callbacks);
             if (success)
@@ -67,6 +72,25 @@ namespace Minotaur
                 }
             }
             CommitCallbackChanges();
+            isNotifying = false;
+        }
+
+        public void Notify(T name, IEventBusArgs arg = null)
+        {
+            //NotifyImmediately(name, arg);
+            if (isNotifying)
+            {
+                _toNotify.Add(new Tuple<T, IEventBusArgs>(name, arg));
+            }
+            else
+            {
+                NotifyImmediately(name, arg);
+                while (_toNotify.Count > 0)
+                {
+                    NotifyImmediately(_toNotify[0].Item1, _toNotify[0].Item2);
+                    _toNotify.RemoveAt(0);
+                }
+            }
         }
     }
 
