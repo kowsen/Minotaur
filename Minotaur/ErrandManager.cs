@@ -103,14 +103,6 @@ namespace Minotaur
                 {
                     Remove(errand, type);
                 }
-                for (var i = 0; i < _removeQueue.Count; i++)
-                {
-                    if (_removeQueue[i].Item2.Equals(type))
-                    {
-                        _removeQueue.RemoveAt(i);
-                        i -= 1;
-                    }
-                }
                 for (var i = 0; i < _addQueue.Count; i++)
                 {
                     if (_addQueue[i].Item2.Equals(type))
