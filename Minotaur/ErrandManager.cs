@@ -9,8 +9,8 @@ namespace Minotaur
         private EntityComponentManager _entities;
         private T Game;
 
-        private List<Tuple<Errand<T>, Type>> _removeQueue;
-        private List<Tuple<Errand<T>, Type>> _addQueue;
+        private List<ErrandStore> _removeQueue;
+        private List<ErrandStore> _addQueue;
 
         public ErrandManager(EntityComponentManager entities, T game)
         {
@@ -18,8 +18,8 @@ namespace Minotaur
             Game = game;
             _errands = new Dictionary<Type, List<Errand<T>>>();
 
-            _removeQueue = new List<Tuple<Errand<T>, Type>>();
-            _addQueue = new List<Tuple<Errand<T>, Type>>();
+            _removeQueue = new List<ErrandStore>();
+            _addQueue = new List<ErrandStore>();
         }
 
         public U Run<U>() where U : Errand<T>, new()
@@ -27,8 +27,26 @@ namespace Minotaur
             var errand = ErrandFactory<T>.Get<U>();
             errand.Attach(this, _entities, Game);
             var type = typeof(U);
-            _addQueue.Add(new Tuple<Errand<T>, Type>(errand, type));
+            _addQueue.Add(ErrandStoreFactory.Get(errand, type));
             return errand;
+        }
+
+        private List<Errand<T>> _provisionStorage = new List<Errand<T>>();
+        public void Provision<U>(int num) where U : Errand<T>, new()
+        {
+            for (var i = 0; i < num; i++)
+            {
+                _provisionStorage.Add(ErrandFactory<T>.Get<U>());
+            }
+            for (var i = 0; i < num; i++)
+            {
+                ErrandFactory<T>.Recycle((U)_provisionStorage[i]);
+            }
+            if (!_errands.ContainsKey(typeof(U)))
+            {
+                _errands[typeof(U)] = new List<Errand<T>>();
+            }
+            _provisionStorage.Clear();
         }
 
         public void Remove<U>(U value) where U : Errand<T>, new()
@@ -38,15 +56,15 @@ namespace Minotaur
 
         public void Remove(Errand<T> value, Type type)
         {
-            _removeQueue.Add(new Tuple<Errand<T>, Type>(value, type));
+            _removeQueue.Add(ErrandStoreFactory.Get(value, type));
         }
 
         public void CommitErrandChanges()
         {
             foreach (var item in _addQueue)
             {
-                var errand = item.Item1;
-                var type = item.Item2;
+                var errand = item.Errand;
+                var type = item.Type;
                 var doesListExist = _errands.TryGetValue(type, out var errands);
                 if (!doesListExist)
                 {
@@ -54,12 +72,13 @@ namespace Minotaur
                     _errands[type] = errands;
                 }
                 errands.Add(errand);
+                ErrandStoreFactory.Recycle(item);
             }
 
             foreach (var item in _removeQueue)
             {
-                var value = item.Item1;
-                var type = item.Item2;
+                var value = item.Errand;
+                var type = item.Type;
                 var isInitialized = _errands.TryGetValue(type, out var errands);
                 if (!isInitialized)
                 {
@@ -72,6 +91,7 @@ namespace Minotaur
                 {
                     ErrandFactory<T>.Recycle(value, type);
                 }
+                ErrandStoreFactory.Recycle(item);
             }
 
             _addQueue.Clear();
@@ -105,9 +125,10 @@ namespace Minotaur
                 }
                 for (var i = 0; i < _addQueue.Count; i++)
                 {
-                    if (_addQueue[i].Item2.Equals(type))
+                    if (_addQueue[i].Type.Equals(type))
                     {
-                        Remove(_addQueue[i].Item1, _addQueue[i].Item2);
+                        Remove(_addQueue[i].Errand, _addQueue[i].Type);
+                        ErrandStoreFactory.Recycle(_addQueue[i]);
                         _addQueue.RemoveAt(i);
                         i -= 1;
                     }
@@ -154,6 +175,43 @@ namespace Minotaur
                 }
             }
             _errands.Clear();
+        }
+
+        private class ErrandStore
+        {
+            public Errand<T> Errand { get; set; }
+            public Type Type { get; set; }
+
+            public ErrandStore(Errand<T> errand, Type type)
+            {
+                Errand = errand;
+                Type = type;
+            }
+        }
+
+        private static class ErrandStoreFactory
+        {
+            private static Queue<ErrandStore> _queue = new Queue<ErrandStore>();
+
+            public static ErrandStore Get(Errand<T> errand, Type type)
+            {
+                if (_queue.Count > 0)
+                {
+                    var item = _queue.Dequeue();
+                    item.Errand = errand;
+                    item.Type = type;
+                    return item;
+                }
+                else
+                {
+                    return new ErrandStore(errand, type);
+                }
+            }
+
+            public static void Recycle(ErrandStore item)
+            {
+                _queue.Enqueue(item);
+            }
         }
     }
 }
