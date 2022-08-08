@@ -14,7 +14,7 @@ namespace SampleLogic
 
         public override void InitializeListeners()
         {
-            Game.Bus.Register<StartEvent>(
+            _game.Bus.Register<StartEvent>(
                 (_) =>
                 {
                     Switch("main");

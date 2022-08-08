@@ -7,9 +7,9 @@ namespace Minotaur
     public abstract class Errand<TGame> : Poolable
     {
         public DrawStatus DrawOrder { get; protected set; } = DrawStatus.NONE;
-        protected ErrandManager<TGame> Errands;
-        protected EntityComponentManager Entities;
-        protected TGame Game;
+        protected ErrandManager<TGame> _errands;
+        protected EntityComponentManager _entities;
+        protected TGame _game;
 
         public void Attach(
             ErrandManager<TGame> errands,
@@ -17,9 +17,9 @@ namespace Minotaur
             TGame game
         )
         {
-            Errands = errands;
-            Entities = entities;
-            Game = game;
+            _errands = errands;
+            _entities = entities;
+            _game = game;
         }
 
         public virtual void Update(TimeSpan time) { }
@@ -31,7 +31,7 @@ namespace Minotaur
         public void End(bool isCancelled = false)
         {
             OnEnd(isCancelled);
-            Errands.Remove(this, GetType());
+            _errands.Remove(this, GetType());
         }
 
         public enum DrawStatus

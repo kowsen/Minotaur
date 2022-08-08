@@ -10,15 +10,15 @@ namespace Minotaur
         protected List<Type> _restrictions = new List<Type>();
 
         public BitSet Signature;
-        protected TGame Game;
-        protected EntityComponentManager Entities;
-        protected ErrandManager<TGame> Errands;
+        protected TGame _game;
+        protected EntityComponentManager _entities;
+        protected ErrandManager<TGame> _errands;
 
         public void Attach(TGame game, EntityComponentManager ecm, ErrandManager<TGame> errands)
         {
-            Game = game;
-            Entities = ecm;
-            Errands = errands;
+            _game = game;
+            _entities = ecm;
+            _errands = errands;
         }
 
         public virtual void Initialize() { }

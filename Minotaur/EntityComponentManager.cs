@@ -249,7 +249,7 @@ namespace Minotaur
             }
             else
             {
-                return Entity.Default;
+                return Entity.Invalid;
             }
         }
 

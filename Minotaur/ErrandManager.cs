@@ -7,7 +7,7 @@ namespace Minotaur
     {
         private Dictionary<Type, List<Errand<TGame>>> _errands;
         private EntityComponentManager _entities;
-        private TGame Game;
+        private TGame _game;
 
         private List<ErrandWithType> _removeQueue;
         private List<ErrandWithType> _addQueue;
@@ -15,7 +15,7 @@ namespace Minotaur
         public ErrandManager(EntityComponentManager entities, TGame game)
         {
             _entities = entities;
-            Game = game;
+            _game = game;
             _errands = new Dictionary<Type, List<Errand<TGame>>>();
 
             _removeQueue = new List<ErrandWithType>();
@@ -25,7 +25,7 @@ namespace Minotaur
         public TErrand Run<TErrand>() where TErrand : Errand<TGame>, new()
         {
             var errand = Pool<TErrand>.Get();
-            errand.Attach(this, _entities, Game);
+            errand.Attach(this, _entities, _game);
             var type = typeof(TErrand);
             _addQueue.Add(new ErrandWithType(errand, type));
             return errand;

@@ -9,13 +9,13 @@ namespace Minotaur
         protected Dictionary<string, Scene<TGame>> _scenes;
         private Scene<TGame> _activeScene;
 
-        protected TGame Game;
+        protected TGame _game;
 
         // Game represents a global game object we want available to all our scenes and systems.
         public World(TGame game)
         {
             _scenes = new Dictionary<string, Scene<TGame>>();
-            Game = game;
+            _game = game;
         }
 
         public void AddScene(string key, Scene<TGame> scene)
@@ -24,7 +24,7 @@ namespace Minotaur
             {
                 throw new Exception($"Trying to insert duplicate scene with key: {key}");
             }
-            scene.Attach(Game);
+            scene.Attach(_game);
             _scenes[key] = scene;
         }
 

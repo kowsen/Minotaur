@@ -6,15 +6,14 @@ namespace Minotaur
 {
     public class Scene<TGame>
     {
-        protected EntityComponentManager Entities;
-        protected SystemManager<TGame> Systems;
-        protected ErrandManager<TGame> Errands;
-
-        protected TGame Game;
+        protected EntityComponentManager _entities;
+        protected SystemManager<TGame> _systems;
+        protected ErrandManager<TGame> _errands;
+        protected TGame _game;
 
         public virtual void Attach(TGame game)
         {
-            Game = game;
+            _game = game;
             ResetECS();
         }
 
@@ -24,39 +23,39 @@ namespace Minotaur
 
         public void Activate()
         {
-            Systems.ActivateSystems();
+            _systems.ActivateSystems();
         }
 
         public void Deactivate()
         {
-            Systems.DeactivateSystems();
+            _systems.DeactivateSystems();
         }
 
         public void Reset()
         {
-            Errands.Clear();
+            _errands.Clear();
             ResetECS();
             Initialize();
         }
 
         private void ResetECS()
         {
-            Entities = new EntityComponentManager();
-            Errands = new ErrandManager<TGame>(Entities, Game);
-            Systems = new SystemManager<TGame>(Entities, Errands, Game);
+            _entities = new EntityComponentManager();
+            _errands = new ErrandManager<TGame>(_entities, _game);
+            _systems = new SystemManager<TGame>(_entities, _errands, _game);
         }
 
         public void Update(TimeSpan time)
         {
-            Systems.Update(time);
-            Errands.Update(time);
+            _systems.Update(time);
+            _errands.Update(time);
         }
 
         public void Draw(TimeSpan time)
         {
-            Errands.Draw(time, Errand<TGame>.DrawStatus.BEFORE);
-            Systems.Draw(time);
-            Errands.Draw(time, Errand<TGame>.DrawStatus.AFTER);
+            _errands.Draw(time, Errand<TGame>.DrawStatus.BEFORE);
+            _systems.Draw(time);
+            _errands.Draw(time, Errand<TGame>.DrawStatus.AFTER);
         }
     }
 }
