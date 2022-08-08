@@ -6,11 +6,11 @@ namespace Minotaur
     public class EntityComponentManager
     {
         private Dictionary<int, Entity> _entities;
-        private Dictionary<int, EntityComponents> _entityComponentMap;
+        private Dictionary<int, BackingEntity> _entityComponentMap;
         private Dictionary<BitSet, EntitySet> _entitySets;
 
-        private List<Tuple<int, Component, Type>> _addQueue;
-        private List<Tuple<int, Type>> _removalQueue;
+        private List<ComponentAddQueueItem> _addQueue;
+        private List<ComponentRemoveQueueItem> _removalQueue;
         private List<int> _entityDeleteQueue;
 
         private EntityFactory _entityFactory;
@@ -18,11 +18,11 @@ namespace Minotaur
         public EntityComponentManager()
         {
             _entities = new Dictionary<int, Entity>();
-            _entityComponentMap = new Dictionary<int, EntityComponents>();
+            _entityComponentMap = new Dictionary<int, BackingEntity>();
             _entitySets = new Dictionary<BitSet, EntitySet>();
 
-            _addQueue = new List<Tuple<int, Component, Type>>();
-            _removalQueue = new List<Tuple<int, Type>>();
+            _addQueue = new List<ComponentAddQueueItem>();
+            _removalQueue = new List<ComponentRemoveQueueItem>();
             _entityDeleteQueue = new List<int>();
 
             _entityFactory = new EntityFactory(this);
@@ -36,7 +36,7 @@ namespace Minotaur
         public TComponent AddComponent<TComponent>(int entityId) where TComponent : Component, new()
         {
             var component = Pool<TComponent>.Get();
-            _addQueue.Add(new Tuple<int, Component, Type>(entityId, component, typeof(TComponent)));
+            _addQueue.Add(new ComponentAddQueueItem(entityId, component));
             return component;
         }
 
@@ -58,7 +58,7 @@ namespace Minotaur
             var success = _entityComponentMap.TryGetValue(entityId, out var components);
             if (!success)
             {
-                components = Pool<EntityComponents>.Get();
+                components = Pool<BackingEntity>.Get();
                 _entityComponentMap[entityId] = components;
             }
 
@@ -98,7 +98,7 @@ namespace Minotaur
         public void RemoveComponent<TComponent>(int entityId) where TComponent : Component
         {
             var type = typeof(TComponent);
-            _removalQueue.Add(new Tuple<int, Type>(entityId, type));
+            _removalQueue.Add(new ComponentRemoveQueueItem(entityId, type));
         }
 
         public void RemoveComponentImmediately<TComponent>(int entityId)
@@ -198,22 +198,25 @@ namespace Minotaur
 
         public void CommitComponentChanges()
         {
-            for (var i = 0; i < _addQueue.Count; i++)
+            foreach (var itemToAdd in _addQueue)
             {
                 AddComponentWithConcreteType(
-                    _addQueue[i].Item1,
-                    _addQueue[i].Item2,
-                    _addQueue[i].Item3
+                    itemToAdd.EntityId,
+                    itemToAdd.Component,
+                    itemToAdd.Component.GetType()
                 );
             }
-            for (var i = 0; i < _removalQueue.Count; i++)
+
+            foreach (var itemToRemove in _removalQueue)
             {
-                RemoveComponentWithConcreteType(_removalQueue[i].Item1, _removalQueue[i].Item2);
+                RemoveComponentWithConcreteType(itemToRemove.EntityId, itemToRemove.ComponentType);
             }
-            for (var i = 0; i < _entityDeleteQueue.Count; i++)
+
+            foreach (var entityToDelete in _entityDeleteQueue)
             {
-                DeleteImmediately(_entityDeleteQueue[i]);
+                DeleteImmediately(entityToDelete);
             }
+
             _addQueue.Clear();
             _removalQueue.Clear();
             _entityDeleteQueue.Clear();
@@ -262,7 +265,7 @@ namespace Minotaur
         }
     }
 
-    public class EntityComponents : Poolable
+    public class BackingEntity : Poolable
     {
         private Dictionary<Type, Component> _components = new Dictionary<Type, Component>();
 
@@ -310,12 +313,36 @@ namespace Minotaur
             {
                 Pool.Recycle(pair.Key, pair.Value);
             }
-            Pool<EntityComponents>.Recycle(this);
+            Pool<BackingEntity>.Recycle(this);
         }
 
         public override void Reset()
         {
             _components.Clear();
+        }
+    }
+
+    struct ComponentAddQueueItem
+    {
+        public int EntityId;
+        public Component Component;
+
+        public ComponentAddQueueItem(int entityId, Component component)
+        {
+            EntityId = entityId;
+            Component = component;
+        }
+    }
+
+    struct ComponentRemoveQueueItem
+    {
+        public int EntityId;
+        public Type ComponentType;
+
+        public ComponentRemoveQueueItem(int entityId, Type componentType)
+        {
+            EntityId = entityId;
+            ComponentType = componentType;
         }
     }
 }

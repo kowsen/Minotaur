@@ -62,9 +62,9 @@ namespace Minotaur
             var success = _callbacks.TryGetValue(typeof(TEvent), out var callbacks);
             if (success)
             {
-                for (var i = 0; i < callbacks.Count; i++)
+                foreach (var callback in callbacks)
                 {
-                    callbacks[i].Invoke(data);
+                    callback.Invoke(data);
                 }
             }
             CommitCallbackChanges();

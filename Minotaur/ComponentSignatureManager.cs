@@ -41,7 +41,7 @@ namespace Minotaur
         }
 
         // Returns true if the types list contains all types within signature
-        public static bool CheckAgainstComponentSignature(BitSet signature, EntityComponents entity)
+        public static bool CheckAgainstComponentSignature(BitSet signature, BackingEntity entity)
         {
             for (var i = 0; i < _nextComponentBit; i += 2)
             {
