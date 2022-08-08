@@ -25,15 +25,22 @@ namespace Minotaur
             return _ecm.Get(combinedSignature);
         }
 
-        public void RemoveComponentFromAll<T>() where T : IComponent
+        public void RemoveComponentFromAll<TComponent>() where TComponent : IComponent
         {
-            if (!ComponentSignatureManager.IsTypeInSignatureRequirements(_signature, typeof(T)))
+            if (
+                !ComponentSignatureManager.IsTypeInSignatureRequirements(
+                    _signature,
+                    typeof(TComponent)
+                )
+            )
             {
-                throw new Exception("Trying to remove non-required component from all in EntitySet");
+                throw new Exception(
+                    "Trying to remove non-required component from all in EntitySet"
+                );
             }
             foreach (var entity in Entities)
             {
-                entity.RemoveComponent<T>();
+                entity.RemoveComponent<TComponent>();
             }
         }
     }

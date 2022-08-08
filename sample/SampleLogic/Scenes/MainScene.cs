@@ -59,7 +59,12 @@ namespace SampleLogic.Scenes
         private void AddBox()
         {
             var boxEntity = Entities.Create();
-            boxEntity.AddComponent(new PositionComponent(_rand.Next(0, Game.Viewport.VirtualWidth), _rand.Next(0, Game.Viewport.VirtualHeight)));
+            boxEntity.AddComponent(
+                new PositionComponent(
+                    _rand.Next(0, Game.Viewport.VirtualWidth),
+                    _rand.Next(0, Game.Viewport.VirtualHeight)
+                )
+            );
             boxEntity.AddComponent(new MovementComponent(_rand.Next(-2, 2), _rand.Next(-2, 2)));
             boxEntity.AddComponent(new TextureComponent(_boxTexture));
         }

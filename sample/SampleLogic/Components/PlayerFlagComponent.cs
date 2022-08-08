@@ -7,7 +7,5 @@ using Minotaur;
 
 namespace SampleLogic.Components
 {
-    public class PlayerFlagComponent : IComponent
-    {
-    }
+    public class PlayerFlagComponent : IComponent { }
 }

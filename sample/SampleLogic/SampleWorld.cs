@@ -14,10 +14,12 @@ namespace SampleLogic
 
         public override void InitializeListeners()
         {
-            Game.Bus.Register(Events.START, (_) =>
-            {
-                Switch("main");
-            });
+            Game.Bus.Register<StartEvent>(
+                (_) =>
+                {
+                    Switch("main");
+                }
+            );
         }
     }
 }

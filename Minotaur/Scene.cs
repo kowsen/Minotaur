@@ -4,29 +4,23 @@ using System.Text;
 
 namespace Minotaur
 {
-    public class Scene<T>
+    public class Scene<TGame>
     {
         protected EntityComponentManager Entities;
-        protected SystemManager<T> Systems;
-        protected ErrandManager<T> Errands;
+        protected SystemManager<TGame> Systems;
+        protected ErrandManager<TGame> Errands;
 
-        protected T Game;
+        protected TGame Game;
 
-        public virtual void Attach(T game)
+        public virtual void Attach(TGame game)
         {
             Game = game;
             ResetECS();
         }
 
-        public virtual void Initialize()
-        {
+        public virtual void Initialize() { }
 
-        }
-
-        public virtual void LoadContent()
-        {
-
-        }
+        public virtual void LoadContent() { }
 
         public void Activate()
         {
@@ -40,8 +34,7 @@ namespace Minotaur
 
         public void Reset()
         {
-            Errands?.Clear();
-
+            Errands.Clear();
             ResetECS();
             Initialize();
         }
@@ -49,8 +42,8 @@ namespace Minotaur
         private void ResetECS()
         {
             Entities = new EntityComponentManager();
-            Errands = new ErrandManager<T>(Entities, Game);
-            Systems = new SystemManager<T>(Entities, Errands, Game);
+            Errands = new ErrandManager<TGame>(Entities, Game);
+            Systems = new SystemManager<TGame>(Entities, Errands, Game);
         }
 
         public void Update(TimeSpan time)
@@ -61,9 +54,9 @@ namespace Minotaur
 
         public void Draw(TimeSpan time)
         {
-            Errands.Draw(time, Errand<T>.DrawStatus.BEFORE);
+            Errands.Draw(time, Errand<TGame>.DrawStatus.BEFORE);
             Systems.Draw(time);
-            Errands.Draw(time, Errand<T>.DrawStatus.AFTER);
+            Errands.Draw(time, Errand<TGame>.DrawStatus.AFTER);
         }
     }
 }

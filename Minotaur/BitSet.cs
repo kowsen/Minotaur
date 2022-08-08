@@ -51,20 +51,20 @@ namespace Minotaur
     /// This class can be thought of in two ways.  You can see it as a
     /// vector of bits or as a set of non-negative integers.  The name
     /// <code>BitSet</code> is a bit misleading.
-    /// 
+    ///
     /// It is implemented by a bit vector, but its equally possible to see
     /// it as set of non-negative integer; each integer in the set is
     /// represented by a set bit at the corresponding index.  The size of
     /// this structure is determined by the highest integer in the set.
-    /// 
+    ///
     /// You can union, intersect and build (symmetric) remainders, by
     /// invoking the logical operations and, or, andNot, resp. xor.
-    /// 
+    ///
     /// This implementation is NOT synchronized against concurrent access from
     /// multiple threads. Specifically, if one thread is reading from a bitset
     /// while another thread is simultaneously modifying it, the results are
     /// undefined.
-    /// 
+    ///
     /// author Jochen Hoenicke
     /// author Tom Tromey (tromey@cygnus.com)
     /// author Eric Blake (ebb9@email.byu.edu)
@@ -89,10 +89,7 @@ namespace Minotaur
         /// <summary>
         /// Create a new empty bit set. All bits are initially false.
         /// </summary>
-        public BitSet()
-            : this(64)
-        {
-        }
+        public BitSet() : this(64) { }
 
         /// <summary>
         /// Create a new empty bit set, with a given size.  This
@@ -362,19 +359,19 @@ namespace Minotaur
         /// Returns a hash code value for this bit set.  The hash code of
         /// two bit sets containing the same integers is identical.  The algorithm
         /// used to compute it is as follows:
-        /// 
+        ///
         /// Suppose the bits in the BitSet were to be stored in an array of
         /// long integers called <code>bits</code>, in such a manner that
         /// bit <code>k</code> is set in the BitSet (for non-negative values
         /// of <code>k</code>) if and only if
-        /// 
+        ///
         /// <code>((k/64) &lt; bits.length)
         /// && ((bits[k/64] & (1L &lt;&lt; (bit % 64))) != 0)
         /// </code>
-        /// 
+        ///
         /// Then the following definition of the GetHashCode method
         /// would be a correct implementation of the actual algorithm:
-        /// 
+        ///
         /// <pre>public override int GetHashCode()
         /// {
         ///   long h = 1234;
@@ -382,17 +379,17 @@ namespace Minotaur
         ///   {
         ///     h ^= bits[i] * (i + 1);
         ///   }
-        ///   
+        ///
         ///   return (int)((h >> 32) ^ h);
         /// }</pre>
-        /// 
+        ///
         /// Note that the hash code values changes, if the set is changed.
         /// </summary>
         /// <returns>the hash code value for this bit set.</returns>
         public override int GetHashCode()
         {
             long h = 1234;
-            for (int i = bits.Length; i > 0;)
+            for (int i = bits.Length; i > 0; )
                 h ^= i * bits[--i];
             return (int)((h >> 32) ^ h);
         }
@@ -432,7 +429,7 @@ namespace Minotaur
         /// Gets the logical number of bits actually used by this bit
         /// set.  It returns the index of the highest set bit plus one.
         /// Note that this method doesn't return the number of set bits.
-        /// 
+        ///
         /// Returns the index of the highest set bit plus one.
         /// </summary>
         public int Length
@@ -480,8 +477,7 @@ namespace Minotaur
                         return from;
                     mask <<= 1;
                     from++;
-                }
-                while (mask != 0);
+                } while (mask != 0);
 
                 mask = 1;
                 offset++;
@@ -494,7 +490,7 @@ namespace Minotaur
         /// Returns the index of the next true bit, from the specified bit
         /// (inclusive). If there is none, -1 is returned. You can iterate over
         /// all true bits with this loop:<br>
-        /// 
+        ///
         /// <pre>for (int i = bs.nextSetBit(0); i &gt;= 0; i = bs.nextSetBit(i + 1))
         /// {
         ///   // operate on i here
@@ -516,8 +512,7 @@ namespace Minotaur
                         return from;
                     mask <<= 1;
                     from++;
-                }
-                while (mask != 0);
+                } while (mask != 0);
 
                 mask = 1;
                 offset++;
@@ -613,15 +608,12 @@ namespace Minotaur
         /// Returns the number of bits actually used by this bit set.  Note
         /// that this method doesn't return the number of set bits, and that
         /// future requests for larger bits will make this automatically grow.
-        /// 
+        ///
         /// Returns the number of bits currently used.
         /// </summary>
         public int Size
         {
-            get
-            {
-                return bits.Length * 64;
-            }
+            get { return bits.Length * 64; }
         }
 
         /// <summary>

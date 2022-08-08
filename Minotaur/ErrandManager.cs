@@ -3,40 +3,40 @@ using System.Collections.Generic;
 
 namespace Minotaur
 {
-    public class ErrandManager<T>
+    public class ErrandManager<TGame>
     {
-        private Dictionary<Type, List<Errand<T>>> _errands;
+        private Dictionary<Type, List<Errand<TGame>>> _errands;
         private EntityComponentManager _entities;
-        private T Game;
+        private TGame Game;
 
         private List<ErrandWithType> _removeQueue;
         private List<ErrandWithType> _addQueue;
 
-        public ErrandManager(EntityComponentManager entities, T game)
+        public ErrandManager(EntityComponentManager entities, TGame game)
         {
             _entities = entities;
             Game = game;
-            _errands = new Dictionary<Type, List<Errand<T>>>();
+            _errands = new Dictionary<Type, List<Errand<TGame>>>();
 
             _removeQueue = new List<ErrandWithType>();
             _addQueue = new List<ErrandWithType>();
         }
 
-        public U Run<U>() where U : Errand<T>, new()
+        public TErrand Run<TErrand>() where TErrand : Errand<TGame>, new()
         {
-            var errand = ErrandFactory<T>.Get<U>();
+            var errand = ErrandFactory<TGame>.Get<TErrand>();
             errand.Attach(this, _entities, Game);
-            var type = typeof(U);
+            var type = typeof(TErrand);
             _addQueue.Add(new ErrandWithType(errand, type));
             return errand;
         }
 
-        public void Remove<U>(U value) where U : Errand<T>, new()
+        public void Remove<TErrand>(TErrand errand) where TErrand : Errand<TGame>, new()
         {
-            Remove(value, typeof(U));
+            Remove(errand, typeof(TErrand));
         }
 
-        public void Remove(Errand<T> value, Type type)
+        public void Remove(Errand<TGame> value, Type type)
         {
             _removeQueue.Add(new ErrandWithType(value, type));
         }
@@ -50,7 +50,7 @@ namespace Minotaur
                 var doesListExist = _errands.TryGetValue(type, out var errands);
                 if (!doesListExist)
                 {
-                    errands = new List<Errand<T>>();
+                    errands = new List<Errand<TGame>>();
                     _errands[type] = errands;
                 }
                 errands.Add(errand);
@@ -70,7 +70,7 @@ namespace Minotaur
 
                 if (isInList)
                 {
-                    ErrandFactory<T>.Recycle(value, type);
+                    ErrandFactory<TGame>.Recycle(value, type);
                 }
             }
 
@@ -78,9 +78,9 @@ namespace Minotaur
             _removeQueue.Clear();
         }
 
-        public int NumRunning<U>() where U : Errand<T>
+        public int NumRunning<TErrand>() where TErrand : Errand<TGame>
         {
-            var isInitialized = _errands.TryGetValue(typeof(U), out var errands);
+            var isInitialized = _errands.TryGetValue(typeof(TErrand), out var errands);
             if (isInitialized)
             {
                 return errands.Count;
@@ -88,17 +88,17 @@ namespace Minotaur
             return 0;
         }
 
-        public void Cancel<U>(U value) where U : Errand<T>, new()
+        public void Cancel<TErrand>(TErrand value) where TErrand : Errand<TGame>, new()
         {
             value.End(true);
         }
 
-        public void CancelAll<U>() where U : Errand<T>, new()
+        public void CancelAll<TErrand>() where TErrand : Errand<TGame>, new()
         {
-            var isInitialized = _errands.TryGetValue(typeof(U), out var errands);
+            var isInitialized = _errands.TryGetValue(typeof(TErrand), out var errands);
             if (isInitialized)
             {
-                var type = typeof(U);
+                var type = typeof(TErrand);
                 foreach (var errand in errands)
                 {
                     Remove(errand, type);
@@ -127,7 +127,7 @@ namespace Minotaur
             CommitErrandChanges();
         }
 
-        public void Draw(TimeSpan time, Errand<T>.DrawStatus drawStatus)
+        public void Draw(TimeSpan time, Errand<TGame>.DrawStatus drawStatus)
         {
             foreach (var errandType in _errands)
             {
@@ -158,10 +158,10 @@ namespace Minotaur
 
         private struct ErrandWithType
         {
-            public Errand<T> Errand { get; set; }
+            public Errand<TGame> Errand { get; set; }
             public Type Type { get; set; }
 
-            public ErrandWithType(Errand<T> errand, Type type)
+            public ErrandWithType(Errand<TGame> errand, Type type)
             {
                 Errand = errand;
                 Type = type;

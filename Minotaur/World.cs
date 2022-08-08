@@ -4,21 +4,21 @@ using System.Text;
 
 namespace Minotaur
 {
-    public class World<T>
+    public class World<TGame>
     {
-        protected Dictionary<string, Scene<T>> _scenes;
-        private Scene<T> _activeScene;
+        protected Dictionary<string, Scene<TGame>> _scenes;
+        private Scene<TGame> _activeScene;
 
-        protected T Game;
+        protected TGame Game;
 
         // Game represents a global game object we want available to all our scenes and systems.
-        public World(T game)
+        public World(TGame game)
         {
-            _scenes = new Dictionary<string, Scene<T>>();
+            _scenes = new Dictionary<string, Scene<TGame>>();
             Game = game;
         }
 
-        public void AddScene(string key, Scene<T> scene)
+        public void AddScene(string key, Scene<TGame> scene)
         {
             if (_scenes.ContainsKey(key))
             {
@@ -45,10 +45,7 @@ namespace Minotaur
             InitializeListeners();
         }
 
-        public virtual void InitializeListeners()
-        {
-
-        }
+        public virtual void InitializeListeners() { }
 
         public void Switch(string key)
         {

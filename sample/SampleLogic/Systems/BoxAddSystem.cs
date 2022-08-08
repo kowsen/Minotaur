@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Minotaur;
 using SampleLogic.Utilities;
 using SampleLogic.Components;
+
 // using Microsoft.Xna.Framework.Graphics;
 
 namespace SampleLogic.Systems
@@ -14,7 +15,7 @@ namespace SampleLogic.Systems
     {
         private string _boxTexture;
         private Random _rand;
-        
+
         public BoxAddSystem(string boxTexture, Random rand)
         {
             _boxTexture = boxTexture;
@@ -23,18 +24,23 @@ namespace SampleLogic.Systems
 
         public override void OnActivate()
         {
-            Game.Bus.Register(Events.SPACE_PRESS, AddBox);
+            Game.Bus.Register<SpacePressEvent>(AddBox);
         }
 
         public override void OnDeactivate()
         {
-            Game.Bus.Remove(Events.SPACE_PRESS, AddBox);
+            Game.Bus.Remove<SpacePressEvent>(AddBox);
         }
 
-        private void AddBox(IEventBusArgs args)
+        private void AddBox(SpacePressEvent spacePressEvent)
         {
             var boxEntity = Entities.Create();
-            boxEntity.AddComponent(new PositionComponent(_rand.Next(0, Game.Viewport.VirtualWidth), _rand.Next(0, Game.Viewport.VirtualHeight)));
+            boxEntity.AddComponent(
+                new PositionComponent(
+                    _rand.Next(0, Game.Viewport.VirtualWidth),
+                    _rand.Next(0, Game.Viewport.VirtualHeight)
+                )
+            );
             boxEntity.AddComponent(new MovementComponent(_rand.Next(-2, 2), _rand.Next(-2, 2)));
             boxEntity.AddComponent(new TextureComponent(_boxTexture));
         }

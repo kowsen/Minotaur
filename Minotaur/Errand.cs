@@ -4,14 +4,18 @@ using System.Text;
 
 namespace Minotaur
 {
-    public abstract class Errand<T>
+    public abstract class Errand<TGame>
     {
         public DrawStatus DrawOrder { get; protected set; } = DrawStatus.NONE;
-        protected ErrandManager<T> Errands;
+        protected ErrandManager<TGame> Errands;
         protected EntityComponentManager Entities;
-        protected T Game;
+        protected TGame Game;
 
-        public void Attach(ErrandManager<T> errands, EntityComponentManager entities, T game)
+        public void Attach(
+            ErrandManager<TGame> errands,
+            EntityComponentManager entities,
+            TGame game
+        )
         {
             Errands = errands;
             Entities = entities;
@@ -20,8 +24,11 @@ namespace Minotaur
         }
 
         public virtual void OnCreate() { }
+
         public virtual void Update(TimeSpan time) { }
+
         public virtual void Draw(TimeSpan time) { }
+
         public virtual void OnEnd(bool isCancelled) { }
 
         public void End(bool isCancelled = false)

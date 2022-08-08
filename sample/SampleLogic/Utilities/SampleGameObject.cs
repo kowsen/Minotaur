@@ -10,23 +10,26 @@ using System.Threading.Tasks;
 
 namespace SampleLogic.Utilities
 {
-    public class Viewport {
+    public class Viewport
+    {
         public int VirtualWidth;
         public int VirtualHeight;
 
-        public Viewport(int width, int height) {
+        public Viewport(int width, int height)
+        {
             VirtualWidth = width;
             VirtualHeight = height;
         }
     }
+
     public class SampleGameObject
     {
         // public ContentManager Content { get; private set; }
         // public SpriteBatch Batch { get; private set; }
         // public GraphicsDevice Graphics { get; private set; }
         // public ViewportAdapter Viewport { get; private set; }
-        public Viewport Viewport {get; private set;}
-        public EventBus<Events> Bus { get; private set; }
+        public Viewport Viewport { get; private set; }
+        public EventBus Bus { get; private set; }
         public InputState Input { get; private set; }
         public SampleGameState State { get; private set; }
 
@@ -38,7 +41,7 @@ namespace SampleLogic.Utilities
             // Graphics = graphics;
             // Viewport = viewport;
             Viewport = new Viewport(100, 100);
-            Bus = new EventBus<Events>();
+            Bus = new EventBus();
             Input = new InputState();
             State = new SampleGameState();
         }

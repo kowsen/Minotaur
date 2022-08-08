@@ -33,14 +33,18 @@ namespace Minotaur
             return _entityFactory.Create();
         }
 
-        public void AddComponent<T>(int entityId, T component) where T : IComponent
+        public void AddComponent<TComponent>(int entityId, TComponent component)
+            where TComponent : IComponent
         {
-            _addQueue.Add(new Tuple<int, IComponent, Type>(entityId, component, typeof(T)));
+            _addQueue.Add(
+                new Tuple<int, IComponent, Type>(entityId, component, typeof(TComponent))
+            );
         }
 
-        public void AddComponentImmediately<T>(int entityId, T component) where T : IComponent
+        public void AddComponentImmediately<TComponent>(int entityId, TComponent component)
+            where TComponent : IComponent
         {
-            AddComponentWithConcreteType(entityId, component, typeof(T));
+            AddComponentWithConcreteType(entityId, component, typeof(TComponent));
         }
 
         private void AddComponentWithConcreteType(int entityId, IComponent component, Type type)
@@ -59,7 +63,9 @@ namespace Minotaur
 
             if (components.ContainsKey(type))
             {
-                throw new Exception($"Inserting duplicate component into entity with Id {entityId}");
+                throw new Exception(
+                    $"Inserting duplicate component into entity with Id {entityId}"
+                );
             }
 
             component.Attach(entityId);
@@ -71,26 +77,34 @@ namespace Minotaur
             {
                 var signature = pair.Key;
                 var entitySet = pair.Value;
-                if (ComponentSignatureManager.IsTypeInSignatureRequirements(signature, type) && DoesEntityMatchSignature(entityId, signature))
+                if (
+                    ComponentSignatureManager.IsTypeInSignatureRequirements(signature, type)
+                    && DoesEntityMatchSignature(entityId, signature)
+                )
                 {
                     entitySet.Entities.Add(entity);
                 }
-                if (ComponentSignatureManager.IsTypeInSignatureRestrictions(signature, type) && entitySet.Entities.Contains(entity) && !DoesEntityMatchSignature(entityId, signature))
+                if (
+                    ComponentSignatureManager.IsTypeInSignatureRestrictions(signature, type)
+                    && entitySet.Entities.Contains(entity)
+                    && !DoesEntityMatchSignature(entityId, signature)
+                )
                 {
                     entitySet.Entities.Remove(entity);
                 }
             }
         }
 
-        public void RemoveComponent<T>(int entityId) where T : IComponent
+        public void RemoveComponent<TComponent>(int entityId) where TComponent : IComponent
         {
-            var type = typeof(T);
+            var type = typeof(TComponent);
             _removalQueue.Add(new Tuple<int, Type>(entityId, type));
         }
 
-        public void RemoveComponentImmediately<T>(int entityId) where T : IComponent
+        public void RemoveComponentImmediately<TComponent>(int entityId)
+            where TComponent : IComponent
         {
-            RemoveComponentWithConcreteType(entityId, typeof(T));
+            RemoveComponentWithConcreteType(entityId, typeof(TComponent));
         }
 
         public void RemoveComponentWithConcreteType(int entityId, Type type)
@@ -98,7 +112,9 @@ namespace Minotaur
             var success = _entityComponentMap.TryGetValue(entityId, out var components);
             if (!success)
             {
-                throw new Exception($"Trying to remove component from nonexistant entity with Id {entityId}");
+                throw new Exception(
+                    $"Trying to remove component from nonexistant entity with Id {entityId}"
+                );
             }
 
             components.Remove(type);
@@ -109,43 +125,55 @@ namespace Minotaur
             {
                 var signature = pair.Key;
                 var entities = pair.Value;
-                if (ComponentSignatureManager.IsTypeInSignatureRequirements(signature, type) && entities.Entities.Contains(entity))
+                if (
+                    ComponentSignatureManager.IsTypeInSignatureRequirements(signature, type)
+                    && entities.Entities.Contains(entity)
+                )
                 {
                     entities.Entities.Remove(entity);
                 }
-                if (ComponentSignatureManager.IsTypeInSignatureRestrictions(signature, type) && DoesEntityMatchSignature(entityId, signature))
+                if (
+                    ComponentSignatureManager.IsTypeInSignatureRestrictions(signature, type)
+                    && DoesEntityMatchSignature(entityId, signature)
+                )
                 {
                     entities.Entities.Add(entity);
                 }
             }
         }
 
-        public T GetComponent<T>(int entityId) where T : IComponent
+        public TComponent GetComponent<TComponent>(int entityId) where TComponent : IComponent
         {
             var success = _entityComponentMap.TryGetValue(entityId, out var components);
             if (!success)
             {
-                throw new Exception($"Trying to get component of type {typeof(T)} from nonexistent entity with Id {entityId}");
+                throw new Exception(
+                    $"Trying to get component of type {typeof(TComponent)} from nonexistent entity with Id {entityId}"
+                );
             }
 
-            success = components.TryGetValue(typeof(T), out var component);
+            success = components.TryGetValue(typeof(TComponent), out var component);
             if (!success)
             {
-                throw new Exception($"Trying to get nonexistent component of type {typeof(T)} from entity with Id {entityId}");
+                throw new Exception(
+                    $"Trying to get nonexistent component of type {typeof(TComponent)} from entity with Id {entityId}"
+                );
             }
 
-            return (T)component;
+            return (TComponent)component;
         }
 
-        public bool HasComponent<T>(int entityId)
+        public bool HasComponent<TComponent>(int entityId)
         {
             var success = _entityComponentMap.TryGetValue(entityId, out var components);
             if (!success)
             {
-                throw new Exception($"Trying to get component of type {typeof(T)} from nonexistent entity with Id {entityId}");
+                throw new Exception(
+                    $"Trying to get component of type {typeof(TComponent)} from nonexistent entity with Id {entityId}"
+                );
             }
 
-            return components.ContainsKey(typeof(T));
+            return components.ContainsKey(typeof(TComponent));
         }
 
         public void Delete(int entityId)
@@ -177,7 +205,11 @@ namespace Minotaur
         {
             for (var i = 0; i < _addQueue.Count; i++)
             {
-                AddComponentWithConcreteType(_addQueue[i].Item1, _addQueue[i].Item2, _addQueue[i].Item3);
+                AddComponentWithConcreteType(
+                    _addQueue[i].Item1,
+                    _addQueue[i].Item2,
+                    _addQueue[i].Item3
+                );
             }
             for (var i = 0; i < _removalQueue.Count; i++)
             {
@@ -232,7 +264,10 @@ namespace Minotaur
         {
             var components = _entityComponentMap[entityId];
             var componentTypes = new List<Type>(components.Keys);
-            return ComponentSignatureManager.CheckAgainstComponentSignature(signature, componentTypes);
+            return ComponentSignatureManager.CheckAgainstComponentSignature(
+                signature,
+                componentTypes
+            );
         }
     }
 }

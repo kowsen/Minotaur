@@ -12,18 +12,17 @@ namespace SampleLogic.Systems
     {
         public override void OnActivate()
         {
-            Game.Bus.Register(Events.BOUNCE, OnBounce);
+            Game.Bus.Register<BounceEvent>(OnBounce);
         }
 
         public override void OnDeactivate()
         {
-            Game.Bus.Remove(Events.BOUNCE, OnBounce);
+            Game.Bus.Remove<BounceEvent>(OnBounce);
         }
 
-        private void OnBounce(IEventBusArgs args)
+        private void OnBounce(BounceEvent bounceEvent)
         {
-            var bounceArgs = (BounceArgs)args;
-            Console.WriteLine($"Bounce by: {bounceArgs.Id}");
+            Console.WriteLine($"Bounce by: {bounceEvent.Id}");
         }
     }
 }

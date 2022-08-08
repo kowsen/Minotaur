@@ -4,17 +4,17 @@ using System.Text;
 
 namespace Minotaur
 {
-    public abstract class EntitySystem<T>
+    public abstract class EntitySystem<TGame>
     {
         protected List<Type> _requirements = new List<Type>();
         protected List<Type> _restrictions = new List<Type>();
 
         public BitSet Signature;
-        protected T Game;
+        protected TGame Game;
         protected EntityComponentManager Entities;
-        protected ErrandManager<T> Errands;
+        protected ErrandManager<TGame> Errands;
 
-        public void Attach(T game, EntityComponentManager ecm, ErrandManager<T> errands)
+        public void Attach(TGame game, EntityComponentManager ecm, ErrandManager<TGame> errands)
         {
             Game = game;
             Entities = ecm;
@@ -22,12 +22,17 @@ namespace Minotaur
         }
 
         public virtual void Initialize() { }
+
         public virtual void OnActivate() { }
+
         public virtual void OnDeactivate() { }
 
         public virtual void Update(TimeSpan time, Entity entity) { }
+
         public virtual void Update(TimeSpan time, EntitySet entities) { }
+
         public virtual void Draw(TimeSpan time, Entity entity) { }
+
         public virtual void Draw(TimeSpan time, EntitySet entities) { }
 
         protected void SetRequirements(params Type[] types)
@@ -44,17 +49,20 @@ namespace Minotaur
 
         private void UpdateSignature()
         {
-            Signature = ComponentSignatureManager.GenerateComponentSignature(_requirements, _restrictions);
+            Signature = ComponentSignatureManager.GenerateComponentSignature(
+                _requirements,
+                _restrictions
+            );
         }
     }
 
-    public abstract class GameSystem<T>
+    public abstract class GameSystem<TGame>
     {
-        protected T Game;
+        protected TGame Game;
         protected EntityComponentManager Entities;
-        protected ErrandManager<T> Errands;
+        protected ErrandManager<TGame> Errands;
 
-        public void Attach(T game, EntityComponentManager ecm, ErrandManager<T> errands)
+        public void Attach(TGame game, EntityComponentManager ecm, ErrandManager<TGame> errands)
         {
             Game = game;
             Entities = ecm;
@@ -62,10 +70,13 @@ namespace Minotaur
         }
 
         public virtual void Initialize() { }
+
         public virtual void OnActivate() { }
+
         public virtual void OnDeactivate() { }
 
         public virtual void Update(TimeSpan time) { }
+
         public virtual void Draw(TimeSpan time) { }
     }
 }

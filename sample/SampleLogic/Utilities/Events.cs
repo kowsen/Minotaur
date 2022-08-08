@@ -7,20 +7,17 @@ using Minotaur;
 
 namespace SampleLogic.Utilities
 {
-    public enum Events
-    {
-        BOUNCE,
-        SPACE_PRESS,
-        START
-    }
-
-    public class BounceArgs : IEventBusArgs
+    public class BounceEvent : IEvent
     {
         public int Id { get; set; }
 
-        public BounceArgs(int id)
+        public BounceEvent(int id)
         {
             Id = id;
         }
     }
+
+    public class SpacePressEvent : IEvent { }
+
+    public class StartEvent : IEvent { }
 }

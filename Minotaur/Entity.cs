@@ -18,42 +18,45 @@ namespace Minotaur
             _ecs = ecs;
         }
 
-        public void AddComponentImmediately<T>(T component) where T : IComponent
+        public void AddComponentImmediately<TComponent>(TComponent component)
+            where TComponent : IComponent
         {
             _ecs.AddComponentImmediately(Id, component);
         }
 
-        public void AddComponent<T>(T component, bool ignoreIfExists = false) where T : IComponent
+        public void AddComponent<TComponent>(TComponent component, bool ignoreIfExists = false)
+            where TComponent : IComponent
         {
-            if (ignoreIfExists && HasComponent<T>())
+            if (ignoreIfExists && HasComponent<TComponent>())
             {
                 return;
             }
             _ecs.AddComponent(Id, component);
         }
 
-        public T GetComponent<T>() where T : IComponent
+        public TComponent GetComponent<TComponent>() where TComponent : IComponent
         {
-            return _ecs.GetComponent<T>(Id);
+            return _ecs.GetComponent<TComponent>(Id);
         }
 
-        public bool HasComponent<T>()
+        public bool HasComponent<TComponent>()
         {
-            return _ecs.HasComponent<T>(Id);
+            return _ecs.HasComponent<TComponent>(Id);
         }
 
-        public void RemoveComponentImmediately<T>() where T : IComponent
+        public void RemoveComponentImmediately<TComponent>() where TComponent : IComponent
         {
-            _ecs.RemoveComponentImmediately<T>(Id);
+            _ecs.RemoveComponentImmediately<TComponent>(Id);
         }
 
-        public void RemoveComponent<T>(bool ignoreIfDoesntExist = false) where T : IComponent
+        public void RemoveComponent<TComponent>(bool ignoreIfDoesntExist = false)
+            where TComponent : IComponent
         {
-            if (ignoreIfDoesntExist && !HasComponent<T>())
+            if (ignoreIfDoesntExist && !HasComponent<TComponent>())
             {
                 return;
             }
-            _ecs.RemoveComponent<T>(Id);
+            _ecs.RemoveComponent<TComponent>(Id);
         }
 
         public void DeleteImmediately()

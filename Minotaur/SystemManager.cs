@@ -5,32 +5,32 @@ using System.Text;
 
 namespace Minotaur
 {
-    public class SystemManager<T>
+    public class SystemManager<TGame>
     {
         private EntityComponentManager _ecs;
-        private ErrandManager<T> _errands;
-        private List<EntitySystem<T>> _entitySystems;
-        private List<GameSystem<T>> _gameSystems;
+        private ErrandManager<TGame> _errands;
+        private List<EntitySystem<TGame>> _entitySystems;
+        private List<GameSystem<TGame>> _gameSystems;
 
-        private T _game;
+        private TGame _game;
 
-        public SystemManager(EntityComponentManager ecs, ErrandManager<T> errands, T game)
+        public SystemManager(EntityComponentManager ecs, ErrandManager<TGame> errands, TGame game)
         {
             _ecs = ecs;
             _errands = errands;
-            _entitySystems = new List<EntitySystem<T>>();
-            _gameSystems = new List<GameSystem<T>>();
+            _entitySystems = new List<EntitySystem<TGame>>();
+            _gameSystems = new List<GameSystem<TGame>>();
             _game = game;
         }
 
-        public void AddSystem(EntitySystem<T> system)
+        public void AddSystem(EntitySystem<TGame> system)
         {
             system.Attach(_game, _ecs, _errands);
             _entitySystems.Add(system);
             system.Initialize();
         }
 
-        public void AddSystem(GameSystem<T> system)
+        public void AddSystem(GameSystem<TGame> system)
         {
             system.Attach(_game, _ecs, _errands);
             _gameSystems.Add(system);
@@ -39,47 +39,48 @@ namespace Minotaur
 
         public void ActivateSystems()
         {
-            for (var i = 0; i < _entitySystems.Count; i++)
+            foreach (var entitySystem in _entitySystems)
             {
-                _entitySystems[i].OnActivate();
+                entitySystem.OnActivate();
             }
-            for (var i = 0; i < _gameSystems.Count; i++)
+
+            foreach (var gameSystem in _gameSystems)
             {
-                _gameSystems[i].OnActivate();
+                gameSystem.OnActivate();
             }
         }
 
         public void DeactivateSystems()
         {
-            for (var i = 0; i < _entitySystems.Count; i++)
+            foreach (var entitySystem in _entitySystems)
             {
-                _entitySystems[i].OnDeactivate();
+                entitySystem.OnDeactivate();
             }
-            for (var i = 0; i < _gameSystems.Count; i++)
+
+            foreach (var gameSystem in _gameSystems)
             {
-                _gameSystems[i].OnDeactivate();
+                gameSystem.OnDeactivate();
             }
         }
 
         public void Update(TimeSpan time)
         {
-            for (var i = 0; i < _gameSystems.Count; i++)
+            foreach (var entitySystem in _entitySystems)
             {
-                _gameSystems[i].Update(time);
-            }
-
-            for (var i = 0; i < _entitySystems.Count; i++)
-            {
-                var system = _entitySystems[i];
-                var entities = _ecs.Get(system.Signature);
-                if (entities.Entities.Count > 0)
+                var entitySet = _ecs.Get(entitySystem.Signature);
+                if (entitySet.Entities.Count > 0)
                 {
-                    system.Update(time, entities);
-                    for (var j = 0; j < entities.Entities.Count; j++)
+                    entitySystem.Update(time, entitySet);
+                    foreach (var entity in entitySet.Entities)
                     {
-                        system.Update(time, entities.Entities[j]);
+                        entitySystem.Update(time, entity);
                     }
                 }
+            }
+
+            foreach (var gameSystem in _gameSystems)
+            {
+                gameSystem.Update(time);
             }
 
             _ecs.CommitComponentChanges();
@@ -87,23 +88,22 @@ namespace Minotaur
 
         public void Draw(TimeSpan time)
         {
-            for (var i = 0; i < _entitySystems.Count; i++)
+            foreach (var entitySystem in _entitySystems)
             {
-                var system = _entitySystems[i];
-                var entities = _ecs.Get(system.Signature);
-                if (entities.Entities.Count > 0)
+                var entitySet = _ecs.Get(entitySystem.Signature);
+                if (entitySet.Entities.Count > 0)
                 {
-                    system.Draw(time, entities);
-                    for (var j = 0; j < entities.Entities.Count; j++)
+                    entitySystem.Draw(time, entitySet);
+                    foreach (var entity in entitySet.Entities)
                     {
-                        system.Draw(time, entities.Entities[j]);
+                        entitySystem.Draw(time, entity);
                     }
                 }
             }
 
-            for (var i = 0; i < _gameSystems.Count; i++)
+            foreach (var gameSystem in _gameSystems)
             {
-                _gameSystems[i].Draw(time);
+                gameSystem.Draw(time);
             }
 
             _ecs.CommitComponentChanges();

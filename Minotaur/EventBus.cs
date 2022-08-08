@@ -4,53 +4,49 @@ using System.Text;
 
 namespace Minotaur
 {
-    public class EventBus<T>
+    public class EventBus
     {
-        private Dictionary<T, List<Action<IEventBusArgs>>> _callbacks;
+        private Dictionary<Type, List<Action<IEvent>>> _callbacks;
 
-        private List<Tuple<T, Action<IEventBusArgs>>> _toAdd;
-        private List<Tuple<T, Action<IEventBusArgs>>> _toRemove;
-        private List<Tuple<T, IEventBusArgs>> _toNotify;
+        private List<EventListener<IEvent>> _toAdd;
+        private List<EventListener<IEvent>> _toRemove;
+        private List<IEvent> _toNotify;
 
         public EventBus()
         {
-            _callbacks = new Dictionary<T, List<Action<IEventBusArgs>>>();
+            _callbacks = new Dictionary<Type, List<Action<IEvent>>>();
 
-            _toAdd = new List<Tuple<T, Action<IEventBusArgs>>>();
-            _toRemove = new List<Tuple<T, Action<IEventBusArgs>>>();
-            _toNotify = new List<Tuple<T, IEventBusArgs>>();
+            _toAdd = new List<EventListener<IEvent>>();
+            _toRemove = new List<EventListener<IEvent>>();
+            _toNotify = new List<IEvent>();
         }
 
-        public void Register<U>(T name, Action<IEventBusArgs> cb)
+        public void Register<TEvent>(Action<TEvent> cb) where TEvent : IEvent
         {
-            _toAdd.Add(new Tuple<T, Action<IEventBusArgs>>(name, cb));
+            _toAdd.Add(new EventListener<IEvent>(cb as Action<IEvent>));
         }
 
-        public void Remove(T name, Action<IEventBusArgs> cb)
+        public void Remove<TEvent>(Action<TEvent> cb) where TEvent : IEvent
         {
-            _toRemove.Add(new Tuple<T, Action<IEventBusArgs>>(name, cb));
+            _toRemove.Add(new EventListener<IEvent>(cb as Action<IEvent>));
         }
 
         public void CommitCallbackChanges()
         {
-            foreach (var val in _toAdd)
+            foreach (var listener in _toAdd)
             {
-                var name = val.Item1;
-                var cb = val.Item2;
-                var success = _callbacks.TryGetValue(name, out var callbacks);
+                var success = _callbacks.TryGetValue(listener.EventType, out var callbacks);
                 if (!success)
                 {
-                    callbacks = new List<Action<IEventBusArgs>>();
-                    _callbacks[name] = callbacks;
+                    callbacks = new List<Action<IEvent>>();
+                    _callbacks[listener.EventType] = callbacks;
                 }
-                callbacks.Add(cb);
+                callbacks.Add(listener.Action);
             }
 
-            foreach (var val in _toRemove)
+            foreach (var listener in _toRemove)
             {
-                var name = val.Item1;
-                var cb = val.Item2;
-                _callbacks[name].Remove(cb);
+                _callbacks[listener.EventType].Remove(listener.Action);
             }
 
             _toAdd.Clear();
@@ -59,39 +55,56 @@ namespace Minotaur
 
         private bool isNotifying = false;
 
-        private void NotifyImmediately(T name, IEventBusArgs arg = null)
+        private void NotifyImmediately<TEvent>(TEvent data) where TEvent : IEvent
         {
             isNotifying = true;
             CommitCallbackChanges();
-            var success = _callbacks.TryGetValue(name, out var callbacks);
+            var success = _callbacks.TryGetValue(typeof(TEvent), out var callbacks);
             if (success)
             {
                 for (var i = 0; i < callbacks.Count; i++)
                 {
-                    callbacks[i].Invoke(arg);
+                    callbacks[i].Invoke(data);
                 }
             }
             CommitCallbackChanges();
             isNotifying = false;
         }
 
-        public void Notify(T name, IEventBusArgs arg = null)
+        public void Notify<TEvent>(TEvent data) where TEvent : IEvent
         {
             if (isNotifying)
             {
-                _toNotify.Add(new Tuple<T, IEventBusArgs>(name, arg));
+                _toNotify.Add(data);
             }
             else
             {
-                NotifyImmediately(name, arg);
-                while (_toNotify.Count > 0)
-                {
-                    NotifyImmediately(_toNotify[0].Item1, _toNotify[0].Item2);
-                    _toNotify.RemoveAt(0);
-                }
+                NotifyImmediately(data);
+                DrainNotifyQueue();
+            }
+        }
+
+        private void DrainNotifyQueue()
+        {
+            while (_toNotify.Count > 0)
+            {
+                NotifyImmediately(_toNotify[0]);
+                _toNotify.RemoveAt(0);
             }
         }
     }
 
-    public interface IEventBusArgs { }
+    public struct EventListener<TEvent> where TEvent : IEvent
+    {
+        public Type EventType;
+        public Action<TEvent> Action;
+
+        public EventListener(Action<TEvent> action)
+        {
+            Action = action;
+            EventType = typeof(TEvent);
+        }
+    }
+
+    public interface IEvent { }
 }

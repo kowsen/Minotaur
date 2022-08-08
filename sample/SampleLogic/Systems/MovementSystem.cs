@@ -13,9 +13,16 @@ namespace SampleLogic.Systems
     {
         public MovementSystem()
         {
-            var requirements = new List<Type>() { typeof(PositionComponent), typeof(MovementComponent) };
+            var requirements = new List<Type>()
+            {
+                typeof(PositionComponent),
+                typeof(MovementComponent)
+            };
             var restrictions = new List<Type>();
-            Signature = ComponentSignatureManager.GenerateComponentSignature(requirements, restrictions);
+            Signature = ComponentSignatureManager.GenerateComponentSignature(
+                requirements,
+                restrictions
+            );
         }
 
         public override void Update(TimeSpan time, Entity entity)
@@ -30,12 +37,17 @@ namespace SampleLogic.Systems
 
             var didBounce = false;
 
-            if ((position.X < 0 && movement.DX < 0) || (position.X > screenWidth && movement.DX > 0))
+            if (
+                (position.X < 0 && movement.DX < 0) || (position.X > screenWidth && movement.DX > 0)
+            )
             {
                 movement.DX = -movement.DX;
                 didBounce = true;
             }
-            if ((position.Y < 0 && movement.DY < 0) || (position.Y > screenHeight && movement.DY > 0))
+            if (
+                (position.Y < 0 && movement.DY < 0)
+                || (position.Y > screenHeight && movement.DY > 0)
+            )
             {
                 movement.DY = -movement.DY;
                 didBounce = true;
@@ -43,7 +55,7 @@ namespace SampleLogic.Systems
 
             if (didBounce)
             {
-                Game.Bus.Notify(Events.BOUNCE, new BounceArgs(entity.Id));
+                Game.Bus.Notify(new BounceEvent(entity.Id));
             }
 
             position.X += movement.DX;

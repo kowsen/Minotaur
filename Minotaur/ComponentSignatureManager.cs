@@ -17,7 +17,10 @@ namespace Minotaur
             _requirementMask = new BitSet();
         }
 
-        public static BitSet GenerateComponentSignature(List<Type> typeRequirements, List<Type> typeRestrictions)
+        public static BitSet GenerateComponentSignature(
+            List<Type> typeRequirements,
+            List<Type> typeRestrictions
+        )
         {
             var signature = new BitSet();
             if (typeRequirements != null)
@@ -46,7 +49,8 @@ namespace Minotaur
             var signatureClone = signature.Clone();
             signatureClone.And(_requirementMask);
 
-            return requirementSignature.ContainsAll(signatureClone) && !restrictionSignature.Intersects(signature);
+            return requirementSignature.ContainsAll(signatureClone)
+                && !restrictionSignature.Intersects(signature);
         }
 
         public static bool IsTypeInSignatureRequirements(BitSet signature, Type type)
