@@ -6,10 +6,7 @@ namespace Minotaur
 {
     public abstract class EntitySystem<TGame>
     {
-        protected List<Type> _requirements = new List<Type>();
-        protected List<Type> _restrictions = new List<Type>();
-
-        public BitSet Signature;
+        public Signature Signature = new Signature();
         protected TGame _game;
         protected EntityComponentManager _entities;
         protected ErrandManager<TGame> _errands;
@@ -34,26 +31,6 @@ namespace Minotaur
         public virtual void Draw(TimeSpan time, Entity entity) { }
 
         public virtual void Draw(TimeSpan time, EntitySet entities) { }
-
-        protected void SetRequirements(params Type[] types)
-        {
-            _requirements = new List<Type>(types);
-            UpdateSignature();
-        }
-
-        protected void setRestrictions(params Type[] types)
-        {
-            _restrictions = new List<Type>(types);
-            UpdateSignature();
-        }
-
-        private void UpdateSignature()
-        {
-            Signature = ComponentSignatureManager.GenerateComponentSignature(
-                _requirements,
-                _restrictions
-            );
-        }
     }
 
     public abstract class GameSystem<TGame>

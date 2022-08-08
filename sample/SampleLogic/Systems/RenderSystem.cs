@@ -14,16 +14,7 @@ namespace SampleLogic.Systems
     {
         public RenderSystem()
         {
-            var requirements = new List<Type>()
-            {
-                typeof(PositionComponent),
-                typeof(TextureComponent)
-            };
-            var restrictions = new List<Type>();
-            Signature = ComponentSignatureManager.GenerateComponentSignature(
-                requirements,
-                restrictions
-            );
+            Signature.SetRequirements(typeof(PositionComponent), typeof(TextureComponent));
         }
 
         public override void Draw(TimeSpan time, Entity entity)

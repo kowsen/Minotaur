@@ -7,7 +7,7 @@ namespace Minotaur
     {
         private Dictionary<int, Entity> _entities;
         private Dictionary<int, BackingEntity> _entityComponentMap;
-        private Dictionary<BitSet, EntitySet> _entitySets;
+        private Dictionary<Signature, EntitySet> _entitySets;
 
         private List<ComponentAddQueueItem> _addQueue;
         private List<ComponentRemoveQueueItem> _removalQueue;
@@ -19,7 +19,7 @@ namespace Minotaur
         {
             _entities = new Dictionary<int, Entity>();
             _entityComponentMap = new Dictionary<int, BackingEntity>();
-            _entitySets = new Dictionary<BitSet, EntitySet>();
+            _entitySets = new Dictionary<Signature, EntitySet>();
 
             _addQueue = new List<ComponentAddQueueItem>();
             _removalQueue = new List<ComponentRemoveQueueItem>();
@@ -77,17 +77,15 @@ namespace Minotaur
             {
                 var signature = pair.Key;
                 var entitySet = pair.Value;
-                if (
-                    ComponentSignatureManager.IsTypeInSignatureRequirements(signature, type)
-                    && DoesEntityMatchSignature(entityId, signature)
-                )
+                var backingEntity = _entityComponentMap[entityId];
+                if (signature.IsTypeInRequirements(type) && signature.Check(backingEntity))
                 {
                     entitySet.Entities.Add(entity);
                 }
                 if (
-                    ComponentSignatureManager.IsTypeInSignatureRestrictions(signature, type)
+                    signature.IsTypeInRestrictions(type)
                     && entitySet.Entities.Contains(entity)
-                    && !DoesEntityMatchSignature(entityId, signature)
+                    && !signature.Check(backingEntity)
                 )
                 {
                     entitySet.Entities.Remove(entity);
@@ -121,21 +119,16 @@ namespace Minotaur
 
             // update cached entity sets
             var entity = _entities[entityId];
+            var backingEntity = _entityComponentMap[entityId];
             foreach (var pair in _entitySets)
             {
                 var signature = pair.Key;
                 var entitySet = pair.Value;
-                if (
-                    ComponentSignatureManager.IsTypeInSignatureRequirements(signature, type)
-                    && entitySet.Entities.Contains(entity)
-                )
+                if (signature.IsTypeInRequirements(type) && entitySet.Entities.Contains(entity))
                 {
                     entitySet.Entities.Remove(entity);
                 }
-                if (
-                    ComponentSignatureManager.IsTypeInSignatureRestrictions(signature, type)
-                    && DoesEntityMatchSignature(entityId, signature)
-                )
+                if (signature.IsTypeInRestrictions(type) && signature.Check(backingEntity))
                 {
                     entitySet.Entities.Add(entity);
                 }
@@ -222,17 +215,17 @@ namespace Minotaur
             _entityDeleteQueue.Clear();
         }
 
-        public EntitySet Get(BitSet signature)
+        public EntitySet Get(Signature signature)
         {
             var success = _entitySets.TryGetValue(signature, out var entitySet);
             if (!success)
             {
                 entitySet = new EntitySet(signature, this);
-                foreach (var entityId in _entityComponentMap.Keys)
+                foreach (var pair in _entityComponentMap)
                 {
-                    if (DoesEntityMatchSignature(entityId, signature))
+                    if (signature.Check(pair.Value))
                     {
-                        entitySet.Entities.Add(_entities[entityId]);
+                        entitySet.Entities.Add(_entities[pair.Key]);
                     }
                 }
                 _entitySets[signature] = entitySet;
@@ -256,12 +249,6 @@ namespace Minotaur
         public bool IsValid(int id)
         {
             return _entities.ContainsKey(id);
-        }
-
-        private bool DoesEntityMatchSignature(int entityId, BitSet signature)
-        {
-            var components = _entityComponentMap[entityId];
-            return ComponentSignatureManager.CheckAgainstComponentSignature(signature, components);
         }
     }
 

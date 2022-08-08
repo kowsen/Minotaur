@@ -8,10 +8,10 @@ namespace Minotaur
     public class EntitySet
     {
         public List<Entity> Entities;
-        private BitSet _signature;
+        private Signature _signature;
         private EntityComponentManager _ecm;
 
-        public EntitySet(BitSet signature, EntityComponentManager ecm)
+        public EntitySet(Signature signature, EntityComponentManager ecm)
         {
             Entities = new List<Entity>();
             _signature = signature;
@@ -20,12 +20,7 @@ namespace Minotaur
 
         public void RemoveComponentFromAll<TComponent>() where TComponent : Component
         {
-            if (
-                !ComponentSignatureManager.IsTypeInSignatureRequirements(
-                    _signature,
-                    typeof(TComponent)
-                )
-            )
+            if (!_signature.IsTypeInRequirements(typeof(TComponent)))
             {
                 throw new Exception(
                     "Trying to remove non-required component from all in EntitySet"

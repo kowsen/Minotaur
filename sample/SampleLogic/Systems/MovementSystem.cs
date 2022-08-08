@@ -13,16 +13,7 @@ namespace SampleLogic.Systems
     {
         public MovementSystem()
         {
-            var requirements = new List<Type>()
-            {
-                typeof(PositionComponent),
-                typeof(MovementComponent)
-            };
-            var restrictions = new List<Type>();
-            Signature = ComponentSignatureManager.GenerateComponentSignature(
-                requirements,
-                restrictions
-            );
+            Signature.SetRequirements(typeof(PositionComponent), typeof(MovementComponent));
         }
 
         public override void Update(TimeSpan time, Entity entity)

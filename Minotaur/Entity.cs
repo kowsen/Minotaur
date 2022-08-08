@@ -7,7 +7,7 @@ namespace Minotaur
 {
     public struct Entity : IEquatable<Entity>
     {
-        public static Entity Default = new Entity(-1, null);
+        public static Entity Invalid = new Entity(-1, null);
 
         public int Id { get; private set; }
         private EntityComponentManager _ecs;
