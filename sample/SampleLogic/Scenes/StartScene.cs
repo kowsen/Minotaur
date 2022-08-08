@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Minotaur;
 using SampleLogic.Utilities;
-using Microsoft.Xna.Framework.Graphics;
+// using Microsoft.Xna.Framework.Graphics;
 using SampleLogic.Components;
 using SampleLogic.Systems;
 
@@ -13,16 +13,16 @@ namespace SampleLogic.Scenes
 {
     public class StartScene : Scene<SampleGameObject>
     {
-        private Texture2D _clickTexture;
+        private string _clickTexture;
 
         public override void LoadContent()
         {
-            _clickTexture = Game.Content.Load<Texture2D>("click");
+            // _clickTexture = Game.Content.Load<Texture2D>("click");
         }
 
         public override void Initialize()
         {
-            var clickEntity = Entities.CreateEntity();
+            var clickEntity = Entities.Create();
             clickEntity.AddComponent(new PositionComponent(100, 100));
             clickEntity.AddComponent(new TextureComponent(_clickTexture));
 

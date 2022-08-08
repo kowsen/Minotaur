@@ -20,7 +20,7 @@ namespace SampleLogic.Systems
             Game.Bus.Remove(Events.SPACE_PRESS, OnSpacePress);
         }
 
-        private void OnSpacePress(EventBusArgs args)
+        private void OnSpacePress(IEventBusArgs args)
         {
             Game.Bus.Notify(Events.START);
         }

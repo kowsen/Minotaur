@@ -9,8 +9,8 @@ namespace Minotaur
         private EntityComponentManager _entities;
         private T Game;
 
-        private List<ErrandStore> _removeQueue;
-        private List<ErrandStore> _addQueue;
+        private List<ErrandWithType> _removeQueue;
+        private List<ErrandWithType> _addQueue;
 
         public ErrandManager(EntityComponentManager entities, T game)
         {
@@ -18,8 +18,8 @@ namespace Minotaur
             Game = game;
             _errands = new Dictionary<Type, List<Errand<T>>>();
 
-            _removeQueue = new List<ErrandStore>();
-            _addQueue = new List<ErrandStore>();
+            _removeQueue = new List<ErrandWithType>();
+            _addQueue = new List<ErrandWithType>();
         }
 
         public U Run<U>() where U : Errand<T>, new()
@@ -27,26 +27,8 @@ namespace Minotaur
             var errand = ErrandFactory<T>.Get<U>();
             errand.Attach(this, _entities, Game);
             var type = typeof(U);
-            _addQueue.Add(ErrandStoreFactory.Get(errand, type));
+            _addQueue.Add(new ErrandWithType(errand, type));
             return errand;
-        }
-
-        private List<Errand<T>> _provisionStorage = new List<Errand<T>>();
-        public void Provision<U>(int num) where U : Errand<T>, new()
-        {
-            for (var i = 0; i < num; i++)
-            {
-                _provisionStorage.Add(ErrandFactory<T>.Get<U>());
-            }
-            for (var i = 0; i < num; i++)
-            {
-                ErrandFactory<T>.Recycle((U)_provisionStorage[i]);
-            }
-            if (!_errands.ContainsKey(typeof(U)))
-            {
-                _errands[typeof(U)] = new List<Errand<T>>();
-            }
-            _provisionStorage.Clear();
         }
 
         public void Remove<U>(U value) where U : Errand<T>, new()
@@ -56,7 +38,7 @@ namespace Minotaur
 
         public void Remove(Errand<T> value, Type type)
         {
-            _removeQueue.Add(ErrandStoreFactory.Get(value, type));
+            _removeQueue.Add(new ErrandWithType(value, type));
         }
 
         public void CommitErrandChanges()
@@ -72,7 +54,6 @@ namespace Minotaur
                     _errands[type] = errands;
                 }
                 errands.Add(errand);
-                ErrandStoreFactory.Recycle(item);
             }
 
             foreach (var item in _removeQueue)
@@ -91,7 +72,6 @@ namespace Minotaur
                 {
                     ErrandFactory<T>.Recycle(value, type);
                 }
-                ErrandStoreFactory.Recycle(item);
             }
 
             _addQueue.Clear();
@@ -128,7 +108,6 @@ namespace Minotaur
                     if (_addQueue[i].Type.Equals(type))
                     {
                         Remove(_addQueue[i].Errand, _addQueue[i].Type);
-                        ErrandStoreFactory.Recycle(_addQueue[i]);
                         _addQueue.RemoveAt(i);
                         i -= 1;
                     }
@@ -177,40 +156,15 @@ namespace Minotaur
             _errands.Clear();
         }
 
-        private class ErrandStore
+        private struct ErrandWithType
         {
             public Errand<T> Errand { get; set; }
             public Type Type { get; set; }
 
-            public ErrandStore(Errand<T> errand, Type type)
+            public ErrandWithType(Errand<T> errand, Type type)
             {
                 Errand = errand;
                 Type = type;
-            }
-        }
-
-        private static class ErrandStoreFactory
-        {
-            private static Queue<ErrandStore> _queue = new Queue<ErrandStore>();
-
-            public static ErrandStore Get(Errand<T> errand, Type type)
-            {
-                if (_queue.Count > 0)
-                {
-                    var item = _queue.Dequeue();
-                    item.Errand = errand;
-                    item.Type = type;
-                    return item;
-                }
-                else
-                {
-                    return new ErrandStore(errand, type);
-                }
-            }
-
-            public static void Recycle(ErrandStore item)
-            {
-                _queue.Enqueue(item);
             }
         }
     }

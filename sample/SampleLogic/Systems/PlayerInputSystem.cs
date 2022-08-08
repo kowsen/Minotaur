@@ -13,9 +13,7 @@ namespace SampleLogic.Systems
     {
         public PlayerInputSystem()
         {
-            var requirements = new List<Type>() { typeof(MovementComponent), typeof(PlayerFlagComponent) };
-            var restrictions = new List<Type>();
-            Signature = ComponentSignatureManager.GenerateComponentSignature(requirements, restrictions);
+            SetRequirements(typeof(MovementComponent), typeof(PlayerFlagComponent));
         }
 
         public override void Update(TimeSpan time, Entity entity)

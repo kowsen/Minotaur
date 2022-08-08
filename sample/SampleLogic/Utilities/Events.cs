@@ -14,7 +14,7 @@ namespace SampleLogic.Utilities
         START
     }
 
-    public class BounceArgs : EventBusArgs
+    public class BounceArgs : IEventBusArgs
     {
         public int Id { get; set; }
 

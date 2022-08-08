@@ -20,9 +20,9 @@ namespace SampleLogic.Systems
             Game.Bus.Remove(Events.BOUNCE, OnBounce);
         }
 
-        private void OnBounce(EventBusArgs args)
+        private void OnBounce(IEventBusArgs args)
         {
-            var bounceArgs = args.Unpack<BounceArgs>();
+            var bounceArgs = (BounceArgs)args;
             Console.WriteLine($"Bounce by: {bounceArgs.Id}");
         }
     }

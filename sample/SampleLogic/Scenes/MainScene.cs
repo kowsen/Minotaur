@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Minotaur;
 using SampleLogic.Utilities;
-using Microsoft.Xna.Framework.Graphics;
+// using Microsoft.Xna.Framework.Graphics;
 using SampleLogic.Components;
 using SampleLogic.Systems;
 
@@ -13,9 +13,9 @@ namespace SampleLogic.Scenes
 {
     public class MainScene : Scene<SampleGameObject>
     {
-        private Texture2D _playerTexture;
-        private Texture2D _boxTexture;
-        private Texture2D _directionsTexture;
+        private string _playerTexture;
+        private string _boxTexture;
+        private string _directionsTexture;
 
         private Random _rand;
 
@@ -26,18 +26,18 @@ namespace SampleLogic.Scenes
 
         public override void LoadContent()
         {
-            _playerTexture = Game.Content.Load<Texture2D>("player");
-            _boxTexture = Game.Content.Load<Texture2D>("box");
-            _directionsTexture = Game.Content.Load<Texture2D>("directions");
+            // _playerTexture = Game.Content.Load<Texture2D>("player");
+            // _boxTexture = Game.Content.Load<Texture2D>("box");
+            // _directionsTexture = Game.Content.Load<Texture2D>("directions");
         }
 
         public override void Initialize()
         {
-            var directionsEntity = Entities.CreateEntity();
+            var directionsEntity = Entities.Create();
             directionsEntity.AddComponent(new PositionComponent(50, 400));
             directionsEntity.AddComponent(new TextureComponent(_directionsTexture));
 
-            var playerEntity = Entities.CreateEntity();
+            var playerEntity = Entities.Create();
             playerEntity.AddComponent(new PositionComponent(50, 50));
             playerEntity.AddComponent(new MovementComponent(0, 0));
             playerEntity.AddComponent(new PlayerFlagComponent());
@@ -58,7 +58,7 @@ namespace SampleLogic.Scenes
 
         private void AddBox()
         {
-            var boxEntity = Entities.CreateEntity();
+            var boxEntity = Entities.Create();
             boxEntity.AddComponent(new PositionComponent(_rand.Next(0, Game.Viewport.VirtualWidth), _rand.Next(0, Game.Viewport.VirtualHeight)));
             boxEntity.AddComponent(new MovementComponent(_rand.Next(-2, 2), _rand.Next(-2, 2)));
             boxEntity.AddComponent(new TextureComponent(_boxTexture));

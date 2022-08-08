@@ -7,7 +7,7 @@ namespace Minotaur
     {
         private Dictionary<int, Entity> _entities;
         private Dictionary<int, Dictionary<Type, IComponent>> _entityComponentMap;
-        private Dictionary<BitSet, EntitySet> _matchers;
+        private Dictionary<BitSet, EntitySet> _entitySets;
 
         private List<Tuple<int, IComponent, Type>> _addQueue;
         private List<Tuple<int, Type>> _removalQueue;
@@ -19,7 +19,7 @@ namespace Minotaur
         {
             _entities = new Dictionary<int, Entity>();
             _entityComponentMap = new Dictionary<int, Dictionary<Type, IComponent>>();
-            _matchers = new Dictionary<BitSet, EntitySet>();
+            _entitySets = new Dictionary<BitSet, EntitySet>();
 
             _addQueue = new List<Tuple<int, IComponent, Type>>();
             _removalQueue = new List<Tuple<int, Type>>();
@@ -65,19 +65,19 @@ namespace Minotaur
             component.Attach(entityId);
             components[type] = component;
 
-            // update matchers
+            // update cached entity sets
             var entity = _entities[entityId];
-            foreach (var pair in _matchers)
+            foreach (var pair in _entitySets)
             {
                 var signature = pair.Key;
-                var entities = pair.Value;
+                var entitySet = pair.Value;
                 if (ComponentSignatureManager.IsTypeInSignatureRequirements(signature, type) && DoesEntityMatchSignature(entityId, signature))
                 {
-                    entities.Entities.Add(entity);
+                    entitySet.Entities.Add(entity);
                 }
-                if (ComponentSignatureManager.IsTypeInSignatureRestrictions(signature, type) && entities.Entities.Contains(entity) && !DoesEntityMatchSignature(entityId, signature))
+                if (ComponentSignatureManager.IsTypeInSignatureRestrictions(signature, type) && entitySet.Entities.Contains(entity) && !DoesEntityMatchSignature(entityId, signature))
                 {
-                    entities.Entities.Remove(entity);
+                    entitySet.Entities.Remove(entity);
                 }
             }
         }
@@ -103,9 +103,9 @@ namespace Minotaur
 
             components.Remove(type);
 
-            // update matchers
+            // update cached entity sets
             var entity = _entities[entityId];
-            foreach (var pair in _matchers)
+            foreach (var pair in _entitySets)
             {
                 var signature = pair.Key;
                 var entities = pair.Value;
@@ -162,7 +162,7 @@ namespace Minotaur
             }
 
             var entity = _entities[entityId];
-            foreach (var pair in _matchers)
+            foreach (var pair in _entitySets)
             {
                 var entities = pair.Value;
                 if (entities.Entities.Contains(entity))
@@ -194,24 +194,20 @@ namespace Minotaur
 
         public EntitySet Get(BitSet signature)
         {
-            var success = _matchers.TryGetValue(signature, out var entities);
+            var success = _entitySets.TryGetValue(signature, out var entitySet);
             if (!success)
             {
-                if (!ComponentSignatureManager.ValidateSignature(signature))
-                {
-                    throw new Exception("Trying to fetch with invalid signature (including and excluding the same component)");
-                }
-                entities = new EntitySet(signature, this);
+                entitySet = new EntitySet(signature, this);
                 foreach (var entityId in _entityComponentMap.Keys)
                 {
                     if (DoesEntityMatchSignature(entityId, signature))
                     {
-                        entities.Entities.Add(_entities[entityId]);
+                        entitySet.Entities.Add(_entities[entityId]);
                     }
                 }
-                _matchers[signature] = entities;
+                _entitySets[signature] = entitySet;
             }
-            return entities;
+            return entitySet;
         }
 
         public Entity GetById(int id)

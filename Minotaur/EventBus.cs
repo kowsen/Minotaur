@@ -21,7 +21,7 @@ namespace Minotaur
             _toNotify = new List<Tuple<T, IEventBusArgs>>();
         }
 
-        public void Register(T name, Action<IEventBusArgs> cb)
+        public void Register<U>(T name, Action<IEventBusArgs> cb)
         {
             _toAdd.Add(new Tuple<T, Action<IEventBusArgs>>(name, cb));
         }
@@ -77,7 +77,6 @@ namespace Minotaur
 
         public void Notify(T name, IEventBusArgs arg = null)
         {
-            //NotifyImmediately(name, arg);
             if (isNotifying)
             {
                 _toNotify.Add(new Tuple<T, IEventBusArgs>(name, arg));

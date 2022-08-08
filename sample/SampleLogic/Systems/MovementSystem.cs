@@ -23,8 +23,10 @@ namespace SampleLogic.Systems
             var position = entity.GetComponent<PositionComponent>();
             var movement = entity.GetComponent<MovementComponent>();
 
-            var screenWidth = Game.Viewport.VirtualWidth;
-            var screenHeight = Game.Viewport.VirtualHeight;
+            // var screenWidth = Game.Viewport.VirtualWidth;
+            // var screenHeight = Game.Viewport.VirtualHeight;
+            var screenWidth = 100;
+            var screenHeight = 100;
 
             var didBounce = false;
 
