@@ -6,7 +6,7 @@ namespace Minotaur
     public class EntityComponentManager
     {
         private Dictionary<int, Entity> _entities;
-        private Dictionary<int, Dictionary<Type, Component>> _entityComponentMap;
+        private Dictionary<int, EntityComponents> _entityComponentMap;
         private Dictionary<BitSet, EntitySet> _entitySets;
 
         private List<Tuple<int, Component, Type>> _addQueue;
@@ -18,7 +18,7 @@ namespace Minotaur
         public EntityComponentManager()
         {
             _entities = new Dictionary<int, Entity>();
-            _entityComponentMap = new Dictionary<int, Dictionary<Type, Component>>();
+            _entityComponentMap = new Dictionary<int, EntityComponents>();
             _entitySets = new Dictionary<BitSet, EntitySet>();
 
             _addQueue = new List<Tuple<int, Component, Type>>();
@@ -58,18 +58,18 @@ namespace Minotaur
             var success = _entityComponentMap.TryGetValue(entityId, out var components);
             if (!success)
             {
-                components = new Dictionary<Type, Component>();
+                components = Pool<EntityComponents>.Get();
                 _entityComponentMap[entityId] = components;
             }
 
-            if (components.ContainsKey(type))
+            if (components.HasComponent(type))
             {
                 throw new Exception(
                     $"Inserting duplicate component into entity with Id {entityId}"
                 );
             }
 
-            components[type] = component;
+            components.AddComponent(type, component);
 
             // update cached entity sets
             var entity = _entities[entityId];
@@ -117,13 +117,7 @@ namespace Minotaur
                 );
             }
 
-            var getComponentSuccess = components.TryGetValue(type, out var component);
-            if (getComponentSuccess)
-            {
-                Pool.Recycle(type, component);
-            }
-
-            components.Remove(type);
+            components.RemoveComponent(type);
 
             // update cached entity sets
             var entity = _entities[entityId];
@@ -158,15 +152,7 @@ namespace Minotaur
                 );
             }
 
-            success = components.TryGetValue(typeof(TComponent), out var component);
-            if (!success)
-            {
-                throw new Exception(
-                    $"Trying to get nonexistent component of type {typeof(TComponent)} from entity with Id {entityId}"
-                );
-            }
-
-            return (TComponent)component;
+            return (TComponent)components.GetComponent(typeof(TComponent));
         }
 
         public bool HasComponent<TComponent>(int entityId)
@@ -179,7 +165,7 @@ namespace Minotaur
                 );
             }
 
-            return components.ContainsKey(typeof(TComponent));
+            return components.HasComponent(typeof(TComponent));
         }
 
         public void Delete(int entityId)
@@ -195,11 +181,6 @@ namespace Minotaur
                 throw new Exception($"Trying to delete nonexistent entity with Id {entityId}");
             }
 
-            foreach (var pair in components)
-            {
-                Pool.Recycle(pair.Key, pair.Value);
-            }
-
             _entityComponentMap.Remove(entityId);
 
             var entity = _entities[entityId];
@@ -211,6 +192,8 @@ namespace Minotaur
                 }
             }
             _entities.Remove(entityId);
+
+            components.Recycle();
         }
 
         public void CommitComponentChanges()
@@ -275,11 +258,64 @@ namespace Minotaur
         private bool DoesEntityMatchSignature(int entityId, BitSet signature)
         {
             var components = _entityComponentMap[entityId];
-            var componentTypes = new List<Type>(components.Keys);
-            return ComponentSignatureManager.CheckAgainstComponentSignature(
-                signature,
-                componentTypes
-            );
+            return ComponentSignatureManager.CheckAgainstComponentSignature(signature, components);
+        }
+    }
+
+    public class EntityComponents : Poolable
+    {
+        private Dictionary<Type, Component> _components = new Dictionary<Type, Component>();
+
+        public void AddComponent(Type type, Component component)
+        {
+            if (_components.ContainsKey(type))
+            {
+                throw new Exception($"Inserting duplicate component of type {type} into entity");
+            }
+            _components.Add(type, component);
+        }
+
+        public void RemoveComponent(Type type)
+        {
+            var component = GetComponent(type, true);
+            if (component != null)
+            {
+                Pool.Recycle(type, component);
+            }
+
+            _components.Remove(type);
+        }
+
+        public Component GetComponent(Type type, bool ignoreMissing = false)
+        {
+            var success = _components.TryGetValue(type, out var component);
+            if (!success && !ignoreMissing)
+            {
+                throw new Exception(
+                    $"Trying to get nonexistent component of type {type} from entity"
+                );
+            }
+
+            return component;
+        }
+
+        public bool HasComponent(Type type)
+        {
+            return _components.ContainsKey(type);
+        }
+
+        public void Recycle()
+        {
+            foreach (var pair in _components)
+            {
+                Pool.Recycle(pair.Key, pair.Value);
+            }
+            Pool<EntityComponents>.Recycle(this);
+        }
+
+        public override void Reset()
+        {
+            _components.Clear();
         }
     }
 }

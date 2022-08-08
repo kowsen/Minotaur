@@ -6,15 +6,15 @@ namespace Minotaur
 {
     public static class ComponentSignatureManager
     {
-        private static Dictionary<Type, int> _componentBits;
+        private static Dictionary<Type, int> _componentToBit;
+        private static Dictionary<int, Type> _bitToComponent;
         private static int _nextComponentBit;
-        private static BitSet _requirementMask;
 
         static ComponentSignatureManager()
         {
-            _componentBits = new Dictionary<Type, int>();
+            _componentToBit = new Dictionary<Type, int>();
+            _bitToComponent = new Dictionary<int, Type>();
             _nextComponentBit = 0;
-            _requirementMask = new BitSet();
         }
 
         public static BitSet GenerateComponentSignature(
@@ -41,16 +41,21 @@ namespace Minotaur
         }
 
         // Returns true if the types list contains all types within signature
-        public static bool CheckAgainstComponentSignature(BitSet signature, List<Type> types)
+        public static bool CheckAgainstComponentSignature(BitSet signature, EntityComponents entity)
         {
-            var requirementSignature = GenerateComponentSignature(types, null);
-            var restrictionSignature = GenerateComponentSignature(null, types);
+            for (var i = 0; i < _nextComponentBit; i += 2)
+            {
+                if (signature.Get(i) && !entity.HasComponent(GetBitComponent(i)))
+                {
+                    return false;
+                }
+                if (signature.Get(i + 1) && entity.HasComponent(GetBitComponent(i)))
+                {
+                    return false;
+                }
+            }
 
-            var signatureClone = signature.Clone();
-            signatureClone.And(_requirementMask);
-
-            return requirementSignature.ContainsAll(signatureClone)
-                && !restrictionSignature.Intersects(signature);
+            return true;
         }
 
         public static bool IsTypeInSignatureRequirements(BitSet signature, Type type)
@@ -65,16 +70,25 @@ namespace Minotaur
 
         private static int GetComponentBit(Type type)
         {
-            int signature;
-            var success = _componentBits.TryGetValue(type, out signature);
+            var success = _componentToBit.TryGetValue(type, out var componentBit);
             if (!success)
             {
-                signature = _nextComponentBit;
-                _componentBits[type] = signature;
-                _requirementMask.Set(signature);
+                componentBit = _nextComponentBit;
+                _componentToBit[type] = componentBit;
+                _bitToComponent[componentBit] = type;
                 _nextComponentBit += 2;
             }
-            return signature;
+            return componentBit;
+        }
+
+        private static Type GetBitComponent(int componentBit)
+        {
+            var success = _bitToComponent.TryGetValue(componentBit, out var type);
+            if (!success)
+            {
+                throw new Exception($"Tried to get type for unregistered bit: {componentBit}");
+            }
+            return type;
         }
     }
 }
