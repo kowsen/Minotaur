@@ -1,0 +1,5 @@
+Replace sample with a basic test suite.
+Super simple unit tests plus one big integration test of a fake sample game.
+
+Hook up to Godot, set up basic adapter to convert time and interact with nodes from systems.
+Set up very basic systems to render a grid of a given size and fill it with dummy tiles.

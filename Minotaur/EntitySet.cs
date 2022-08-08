@@ -18,13 +18,6 @@ namespace Minotaur
             _ecm = ecm;
         }
 
-        public EntitySet Query(BitSet otherSignature)
-        {
-            var combinedSignature = otherSignature.Clone();
-            combinedSignature.Or(_signature);
-            return _ecm.Get(combinedSignature);
-        }
-
         public void RemoveComponentFromAll<TComponent>() where TComponent : Component
         {
             if (

@@ -18,11 +18,6 @@ namespace Minotaur
             _ecs = ecs;
         }
 
-        public TComponent AddComponentImmediately<TComponent>() where TComponent : Component, new()
-        {
-            return _ecs.AddComponentImmediately<TComponent>(Id);
-        }
-
         public TComponent AddComponent<TComponent>() where TComponent : Component, new()
         {
             return _ecs.AddComponent<TComponent>(Id);
@@ -38,19 +33,9 @@ namespace Minotaur
             return _ecs.HasComponent<TComponent>(Id);
         }
 
-        public void RemoveComponentImmediately<TComponent>() where TComponent : Component, new()
-        {
-            _ecs.RemoveComponentImmediately<TComponent>(Id);
-        }
-
         public void RemoveComponent<TComponent>() where TComponent : Component
         {
             _ecs.RemoveComponent<TComponent>(Id);
-        }
-
-        public void DeleteImmediately()
-        {
-            _ecs.DeleteImmediately(Id);
         }
 
         public void Delete()

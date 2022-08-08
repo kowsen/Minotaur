@@ -20,10 +20,7 @@ namespace Minotaur
             Errands = errands;
             Entities = entities;
             Game = game;
-            OnCreate();
         }
-
-        public virtual void OnCreate() { }
 
         public virtual void Update(TimeSpan time) { }
 

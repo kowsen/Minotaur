@@ -105,8 +105,6 @@ namespace Minotaur
             {
                 gameSystem.Draw(time);
             }
-
-            _ecs.CommitComponentChanges();
         }
     }
 }
