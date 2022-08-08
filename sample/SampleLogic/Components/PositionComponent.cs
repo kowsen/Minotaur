@@ -7,15 +7,21 @@ using Minotaur;
 
 namespace SampleLogic.Components
 {
-    public class PositionComponent : IComponent
+    public class PositionComponent : Component
     {
         public float X { get; set; }
         public float Y { get; set; }
 
-        public PositionComponent(float x, float y)
+        public void Init(float x, float y)
         {
             X = x;
             Y = y;
+        }
+
+        public override void Reset()
+        {
+            X = 0;
+            Y = 0;
         }
     }
 }

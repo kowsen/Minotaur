@@ -34,14 +34,14 @@ namespace SampleLogic.Scenes
         public override void Initialize()
         {
             var directionsEntity = Entities.Create();
-            directionsEntity.AddComponent(new PositionComponent(50, 400));
-            directionsEntity.AddComponent(new TextureComponent(_directionsTexture));
+            directionsEntity.AddComponent<PositionComponent>().Init(50, 400);
+            directionsEntity.AddComponent<TextureComponent>().Init(_directionsTexture);
 
             var playerEntity = Entities.Create();
-            playerEntity.AddComponent(new PositionComponent(50, 50));
-            playerEntity.AddComponent(new MovementComponent(0, 0));
-            playerEntity.AddComponent(new PlayerFlagComponent());
-            playerEntity.AddComponent(new TextureComponent(_playerTexture));
+            playerEntity.AddComponent<PositionComponent>().Init(50, 50);
+            playerEntity.AddComponent<MovementComponent>().Init(0, 0);
+            playerEntity.AddComponent<PlayerFlagComponent>();
+            playerEntity.AddComponent<TextureComponent>().Init(_playerTexture);
 
             for (var i = 0; i < 5; i++)
             {
@@ -59,14 +59,14 @@ namespace SampleLogic.Scenes
         private void AddBox()
         {
             var boxEntity = Entities.Create();
-            boxEntity.AddComponent(
-                new PositionComponent(
+            boxEntity
+                .AddComponent<PositionComponent>()
+                .Init(
                     _rand.Next(0, Game.Viewport.VirtualWidth),
                     _rand.Next(0, Game.Viewport.VirtualHeight)
-                )
-            );
-            boxEntity.AddComponent(new MovementComponent(_rand.Next(-2, 2), _rand.Next(-2, 2)));
-            boxEntity.AddComponent(new TextureComponent(_boxTexture));
+                );
+            boxEntity.AddComponent<MovementComponent>().Init(_rand.Next(-2, 2), _rand.Next(-2, 2));
+            boxEntity.AddComponent<TextureComponent>().Init(_boxTexture);
         }
     }
 }

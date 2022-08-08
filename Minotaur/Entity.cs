@@ -18,23 +18,17 @@ namespace Minotaur
             _ecs = ecs;
         }
 
-        public void AddComponentImmediately<TComponent>(TComponent component)
-            where TComponent : IComponent
+        public TComponent AddComponentImmediately<TComponent>() where TComponent : Component, new()
         {
-            _ecs.AddComponentImmediately(Id, component);
+            return _ecs.AddComponentImmediately<TComponent>(Id);
         }
 
-        public void AddComponent<TComponent>(TComponent component, bool ignoreIfExists = false)
-            where TComponent : IComponent
+        public TComponent AddComponent<TComponent>() where TComponent : Component, new()
         {
-            if (ignoreIfExists && HasComponent<TComponent>())
-            {
-                return;
-            }
-            _ecs.AddComponent(Id, component);
+            return _ecs.AddComponent<TComponent>(Id);
         }
 
-        public TComponent GetComponent<TComponent>() where TComponent : IComponent
+        public TComponent GetComponent<TComponent>() where TComponent : Component
         {
             return _ecs.GetComponent<TComponent>(Id);
         }
@@ -44,18 +38,13 @@ namespace Minotaur
             return _ecs.HasComponent<TComponent>(Id);
         }
 
-        public void RemoveComponentImmediately<TComponent>() where TComponent : IComponent
+        public void RemoveComponentImmediately<TComponent>() where TComponent : Component, new()
         {
             _ecs.RemoveComponentImmediately<TComponent>(Id);
         }
 
-        public void RemoveComponent<TComponent>(bool ignoreIfDoesntExist = false)
-            where TComponent : IComponent
+        public void RemoveComponent<TComponent>() where TComponent : Component
         {
-            if (ignoreIfDoesntExist && !HasComponent<TComponent>())
-            {
-                return;
-            }
             _ecs.RemoveComponent<TComponent>(Id);
         }
 

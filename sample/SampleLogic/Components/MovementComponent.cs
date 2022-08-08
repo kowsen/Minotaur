@@ -7,15 +7,21 @@ using Minotaur;
 
 namespace SampleLogic.Components
 {
-    public class MovementComponent : IComponent
+    public class MovementComponent : Component
     {
         public float DX { get; set; }
         public float DY { get; set; }
 
-        public MovementComponent(float dx, float dy)
+        public void Init(float dx, float dy)
         {
             DX = dx;
             DY = dy;
+        }
+
+        public override void Reset()
+        {
+            DX = 0;
+            DY = 0;
         }
     }
 }

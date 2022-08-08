@@ -23,8 +23,8 @@ namespace SampleLogic.Scenes
         public override void Initialize()
         {
             var clickEntity = Entities.Create();
-            clickEntity.AddComponent(new PositionComponent(100, 100));
-            clickEntity.AddComponent(new TextureComponent(_clickTexture));
+            clickEntity.AddComponent<PositionComponent>().Init(100, 100);
+            clickEntity.AddComponent<TextureComponent>().Init(_clickTexture);
 
             Systems.AddSystem(new StartListenSystem());
 

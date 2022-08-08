@@ -10,11 +10,11 @@ An arbitrary global object that is attached to and accessible by all Scenes and 
 
 This is where you can store global game state variables, event busses, as well as engine-specific components that systems need to access (for Monogame, this may include a SpriteBatch, Viewport, etc).
 
-## IComponent
+## Component
 Holds some data relating to an entity. A component has no game logic and no update / draw function. It's just data.
 
 ## Entity
-Represents a game object consisting of some number of IComponents. In reality, the entity doesn't actually contain components, it just has a unique Id and a reference to its EntityComponentManager that all calls are passed through to.
+Represents a game object consisting of some number of Components. In reality, the entity doesn't actually contain components, it just has a unique Id and a reference to its EntityComponentManager that all calls are passed through to.
 
 ## System
 A unit of game logic. On initialization we define a "component signature" consisting of required and restricted components to select which entities we want the logic to process. Whenever update and draw are called on the containing World object, overridable functions for updating and drawing will be called on the system with entities that match the signature.

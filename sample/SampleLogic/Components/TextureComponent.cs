@@ -9,13 +9,18 @@ using Minotaur;
 
 namespace SampleLogic.Components
 {
-    public class TextureComponent : IComponent
+    public class TextureComponent : Component
     {
         public string Texture { get; set; }
 
-        public TextureComponent(string texture)
+        public void Init(string texture)
         {
             Texture = texture;
+        }
+
+        public override void Reset()
+        {
+            Texture = "";
         }
     }
 }

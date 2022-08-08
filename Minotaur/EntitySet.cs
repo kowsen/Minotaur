@@ -25,7 +25,7 @@ namespace Minotaur
             return _ecm.Get(combinedSignature);
         }
 
-        public void RemoveComponentFromAll<TComponent>() where TComponent : IComponent
+        public void RemoveComponentFromAll<TComponent>() where TComponent : Component
         {
             if (
                 !ComponentSignatureManager.IsTypeInSignatureRequirements(

@@ -35,14 +35,14 @@ namespace SampleLogic.Systems
         private void AddBox(SpacePressEvent spacePressEvent)
         {
             var boxEntity = Entities.Create();
-            boxEntity.AddComponent(
-                new PositionComponent(
+            boxEntity
+                .AddComponent<PositionComponent>()
+                .Init(
                     _rand.Next(0, Game.Viewport.VirtualWidth),
                     _rand.Next(0, Game.Viewport.VirtualHeight)
-                )
-            );
-            boxEntity.AddComponent(new MovementComponent(_rand.Next(-2, 2), _rand.Next(-2, 2)));
-            boxEntity.AddComponent(new TextureComponent(_boxTexture));
+                );
+            boxEntity.AddComponent<MovementComponent>().Init(_rand.Next(-2, 2), _rand.Next(-2, 2));
+            boxEntity.AddComponent<TextureComponent>().Init(_boxTexture);
         }
     }
 }

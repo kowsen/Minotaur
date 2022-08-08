@@ -7,5 +7,8 @@ using Minotaur;
 
 namespace SampleLogic.Components
 {
-    public class PlayerFlagComponent : IComponent { }
+    public class PlayerFlagComponent : Component
+    {
+        public override void Reset() { }
+    }
 }

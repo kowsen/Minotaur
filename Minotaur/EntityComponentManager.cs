@@ -6,10 +6,10 @@ namespace Minotaur
     public class EntityComponentManager
     {
         private Dictionary<int, Entity> _entities;
-        private Dictionary<int, Dictionary<Type, IComponent>> _entityComponentMap;
+        private Dictionary<int, Dictionary<Type, Component>> _entityComponentMap;
         private Dictionary<BitSet, EntitySet> _entitySets;
 
-        private List<Tuple<int, IComponent, Type>> _addQueue;
+        private List<Tuple<int, Component, Type>> _addQueue;
         private List<Tuple<int, Type>> _removalQueue;
         private List<int> _entityDeleteQueue;
 
@@ -18,10 +18,10 @@ namespace Minotaur
         public EntityComponentManager()
         {
             _entities = new Dictionary<int, Entity>();
-            _entityComponentMap = new Dictionary<int, Dictionary<Type, IComponent>>();
+            _entityComponentMap = new Dictionary<int, Dictionary<Type, Component>>();
             _entitySets = new Dictionary<BitSet, EntitySet>();
 
-            _addQueue = new List<Tuple<int, IComponent, Type>>();
+            _addQueue = new List<Tuple<int, Component, Type>>();
             _removalQueue = new List<Tuple<int, Type>>();
             _entityDeleteQueue = new List<int>();
 
@@ -33,21 +33,22 @@ namespace Minotaur
             return _entityFactory.Create();
         }
 
-        public void AddComponent<TComponent>(int entityId, TComponent component)
-            where TComponent : IComponent
+        public TComponent AddComponent<TComponent>(int entityId) where TComponent : Component, new()
         {
-            _addQueue.Add(
-                new Tuple<int, IComponent, Type>(entityId, component, typeof(TComponent))
-            );
+            var component = ComponentPool<TComponent>.Get();
+            _addQueue.Add(new Tuple<int, Component, Type>(entityId, component, typeof(TComponent)));
+            return component;
         }
 
-        public void AddComponentImmediately<TComponent>(int entityId, TComponent component)
-            where TComponent : IComponent
+        public TComponent AddComponentImmediately<TComponent>(int entityId)
+            where TComponent : Component, new()
         {
+            var component = ComponentPool<TComponent>.Get();
             AddComponentWithConcreteType(entityId, component, typeof(TComponent));
+            return component;
         }
 
-        private void AddComponentWithConcreteType(int entityId, IComponent component, Type type)
+        private void AddComponentWithConcreteType(int entityId, Component component, Type type)
         {
             if (!_entities.ContainsKey(entityId))
             {
@@ -57,7 +58,7 @@ namespace Minotaur
             var success = _entityComponentMap.TryGetValue(entityId, out var components);
             if (!success)
             {
-                components = new Dictionary<Type, IComponent>();
+                components = new Dictionary<Type, Component>();
                 _entityComponentMap[entityId] = components;
             }
 
@@ -68,7 +69,6 @@ namespace Minotaur
                 );
             }
 
-            component.Attach(entityId);
             components[type] = component;
 
             // update cached entity sets
@@ -95,26 +95,32 @@ namespace Minotaur
             }
         }
 
-        public void RemoveComponent<TComponent>(int entityId) where TComponent : IComponent
+        public void RemoveComponent<TComponent>(int entityId) where TComponent : Component
         {
             var type = typeof(TComponent);
             _removalQueue.Add(new Tuple<int, Type>(entityId, type));
         }
 
         public void RemoveComponentImmediately<TComponent>(int entityId)
-            where TComponent : IComponent
+            where TComponent : Component
         {
             RemoveComponentWithConcreteType(entityId, typeof(TComponent));
         }
 
         public void RemoveComponentWithConcreteType(int entityId, Type type)
         {
-            var success = _entityComponentMap.TryGetValue(entityId, out var components);
-            if (!success)
+            var getEntitySuccess = _entityComponentMap.TryGetValue(entityId, out var components);
+            if (!getEntitySuccess)
             {
                 throw new Exception(
                     $"Trying to remove component from nonexistant entity with Id {entityId}"
                 );
+            }
+
+            var getComponentSuccess = components.TryGetValue(type, out var component);
+            if (getComponentSuccess)
+            {
+                component.Recycle();
             }
 
             components.Remove(type);
@@ -124,25 +130,25 @@ namespace Minotaur
             foreach (var pair in _entitySets)
             {
                 var signature = pair.Key;
-                var entities = pair.Value;
+                var entitySet = pair.Value;
                 if (
                     ComponentSignatureManager.IsTypeInSignatureRequirements(signature, type)
-                    && entities.Entities.Contains(entity)
+                    && entitySet.Entities.Contains(entity)
                 )
                 {
-                    entities.Entities.Remove(entity);
+                    entitySet.Entities.Remove(entity);
                 }
                 if (
                     ComponentSignatureManager.IsTypeInSignatureRestrictions(signature, type)
                     && DoesEntityMatchSignature(entityId, signature)
                 )
                 {
-                    entities.Entities.Add(entity);
+                    entitySet.Entities.Add(entity);
                 }
             }
         }
 
-        public TComponent GetComponent<TComponent>(int entityId) where TComponent : IComponent
+        public TComponent GetComponent<TComponent>(int entityId) where TComponent : Component
         {
             var success = _entityComponentMap.TryGetValue(entityId, out var components);
             if (!success)
@@ -183,19 +189,25 @@ namespace Minotaur
 
         public void DeleteImmediately(int entityId)
         {
-            var success = _entityComponentMap.Remove(entityId);
-            if (!success)
+            var getEntitySuccess = _entityComponentMap.TryGetValue(entityId, out var components);
+            if (!getEntitySuccess)
             {
                 throw new Exception($"Trying to delete nonexistent entity with Id {entityId}");
             }
 
-            var entity = _entities[entityId];
-            foreach (var pair in _entitySets)
+            foreach (var component in components.Values)
             {
-                var entities = pair.Value;
-                if (entities.Entities.Contains(entity))
+                component.Recycle();
+            }
+
+            _entityComponentMap.Remove(entityId);
+
+            var entity = _entities[entityId];
+            foreach (var entitySet in _entitySets.Values)
+            {
+                if (entitySet.Entities.Contains(entity))
                 {
-                    entities.Entities.Remove(entity);
+                    entitySet.Entities.Remove(entity);
                 }
             }
             _entities.Remove(entityId);
