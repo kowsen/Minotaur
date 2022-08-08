@@ -24,7 +24,7 @@ namespace Minotaur
 
         public TErrand Run<TErrand>() where TErrand : Errand<TGame>, new()
         {
-            var errand = ErrandFactory<TGame>.Get<TErrand>();
+            var errand = Pool<TErrand>.Get();
             errand.Attach(this, _entities, Game);
             var type = typeof(TErrand);
             _addQueue.Add(new ErrandWithType(errand, type));
@@ -70,7 +70,7 @@ namespace Minotaur
 
                 if (isInList)
                 {
-                    ErrandFactory<TGame>.Recycle(value, type);
+                    Pool.Recycle(type, value);
                 }
             }
 

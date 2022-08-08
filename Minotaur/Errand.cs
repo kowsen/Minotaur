@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Minotaur
 {
-    public abstract class Errand<TGame>
+    public abstract class Errand<TGame> : Poolable
     {
         public DrawStatus DrawOrder { get; protected set; } = DrawStatus.NONE;
         protected ErrandManager<TGame> Errands;

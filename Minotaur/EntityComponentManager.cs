@@ -35,7 +35,7 @@ namespace Minotaur
 
         public TComponent AddComponent<TComponent>(int entityId) where TComponent : Component, new()
         {
-            var component = ComponentPool<TComponent>.Get();
+            var component = Pool<TComponent>.Get();
             _addQueue.Add(new Tuple<int, Component, Type>(entityId, component, typeof(TComponent)));
             return component;
         }
@@ -43,7 +43,7 @@ namespace Minotaur
         public TComponent AddComponentImmediately<TComponent>(int entityId)
             where TComponent : Component, new()
         {
-            var component = ComponentPool<TComponent>.Get();
+            var component = Pool<TComponent>.Get();
             AddComponentWithConcreteType(entityId, component, typeof(TComponent));
             return component;
         }
@@ -120,7 +120,7 @@ namespace Minotaur
             var getComponentSuccess = components.TryGetValue(type, out var component);
             if (getComponentSuccess)
             {
-                component.Recycle();
+                Pool.Recycle(type, component);
             }
 
             components.Remove(type);
@@ -195,9 +195,9 @@ namespace Minotaur
                 throw new Exception($"Trying to delete nonexistent entity with Id {entityId}");
             }
 
-            foreach (var component in components.Values)
+            foreach (var pair in components)
             {
-                component.Recycle();
+                Pool.Recycle(pair.Key, pair.Value);
             }
 
             _entityComponentMap.Remove(entityId);
