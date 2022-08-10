@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Collections.Concurrent;
 
 namespace Minotaur
 {
@@ -20,17 +18,7 @@ namespace Minotaur
             _restrictions = new List<Type>(restrictions);
         }
 
-        public bool IsTypeInRequirements(Type type)
-        {
-            return _requirements.Contains(type);
-        }
-
-        public bool IsTypeInRestrictions(Type type)
-        {
-            return _restrictions.Contains(type);
-        }
-
-        public bool Check(BackingEntity entity)
+        internal bool Check(BackingEntity entity)
         {
             foreach (var requirement in _requirements)
             {

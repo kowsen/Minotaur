@@ -1,25 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Minotaur
 {
     public class EventBus
     {
-        private Dictionary<Type, List<Action<IEvent>>> _callbacks;
+        private Dictionary<Type, List<Action<IEvent>>> _callbacks =
+            new Dictionary<Type, List<Action<IEvent>>>();
 
-        private List<EventListener<IEvent>> _toAdd;
-        private List<EventListener<IEvent>> _toRemove;
-        private List<IEvent> _toNotify;
-
-        public EventBus()
-        {
-            _callbacks = new Dictionary<Type, List<Action<IEvent>>>();
-
-            _toAdd = new List<EventListener<IEvent>>();
-            _toRemove = new List<EventListener<IEvent>>();
-            _toNotify = new List<IEvent>();
-        }
+        private List<EventListener<IEvent>> _toAdd = new List<EventListener<IEvent>>();
+        private List<EventListener<IEvent>> _toRemove = new List<EventListener<IEvent>>();
+        private List<IEvent> _toNotify = new List<IEvent>();
 
         public void Register<TEvent>(Action<TEvent> cb) where TEvent : IEvent
         {

@@ -22,13 +22,13 @@ namespace SampleLogic.Scenes
 
         public override void Initialize()
         {
-            var clickEntity = _entities.Create();
+            var clickEntity = Entities.Create();
             clickEntity.AddComponent<PositionComponent>().Init(100, 100);
             clickEntity.AddComponent<TextureComponent>().Init(_clickTexture);
 
-            _systems.AddSystem(new StartListenSystem());
+            Systems.AddSystem(new StartListenSystem());
 
-            _systems.AddSystem(new RenderSystem());
+            Systems.AddSystem(new RenderSystem());
         }
     }
 }

@@ -1,18 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Minotaur
 {
     public class Scene<TGame>
     {
-        protected EntityComponentManager _entities;
-        protected SystemManager<TGame> _systems;
-        protected TGame _game;
+        public EntityComponentManager Entities { get; private set; }
+        public SystemManager<TGame> Systems { get; private set; }
+        public TGame Game { get; private set; }
 
         public virtual void Attach(TGame game)
         {
-            _game = game;
+            Game = game;
             ResetECS();
         }
 
@@ -22,12 +20,12 @@ namespace Minotaur
 
         public void Activate()
         {
-            _systems.ActivateSystems();
+            Systems.ActivateSystems();
         }
 
         public void Deactivate()
         {
-            _systems.DeactivateSystems();
+            Systems.DeactivateSystems();
         }
 
         public void Reset()
@@ -38,18 +36,18 @@ namespace Minotaur
 
         private void ResetECS()
         {
-            _entities = new EntityComponentManager();
-            _systems = new SystemManager<TGame>(_entities, _game);
+            Entities = new EntityComponentManager();
+            Systems = new SystemManager<TGame>(Entities, Game);
         }
 
         public void Update(TimeSpan time)
         {
-            _systems.Update(time);
+            Systems.Update(time);
         }
 
         public void Draw(TimeSpan time)
         {
-            _systems.Draw(time);
+            Systems.Draw(time);
         }
     }
 }

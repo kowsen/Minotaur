@@ -12,14 +12,14 @@ namespace SampleLogic
     {
         public SampleWorld(SampleGameObject game) : base(game) { }
 
-        public override void InitializeListeners()
-        {
-            _game.Bus.Register<StartEvent>(
-                (_) =>
-                {
-                    Switch("main");
-                }
-            );
-        }
+        // public override void InitializeListeners()
+        // {
+        //     _game.Bus.Register<StartEvent>(
+        //         (_) =>
+        //         {
+        //             Switch("main");
+        //         }
+        //     );
+        // }
     }
 }

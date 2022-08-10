@@ -1,26 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Minotaur
 {
     public class EntityComponentManager
     {
-        private Dictionary<int, BackingEntity> _entities;
-        private Dictionary<Signature, BackingEntitySet> _entitySets;
+        private Dictionary<int, BackingEntity> _entities = new Dictionary<int, BackingEntity>();
+        private Dictionary<Signature, BackingEntitySet> _entitySets =
+            new Dictionary<Signature, BackingEntitySet>();
         private int _nextEntityId = 0;
-
-        public EntityComponentManager()
-        {
-            _entities = new Dictionary<int, BackingEntity>();
-            _entitySets = new Dictionary<Signature, BackingEntitySet>();
-        }
 
         public Entity Create()
         {
             var entity = Pool<BackingEntity>.Get();
             entity.Init(_nextEntityId);
-            _nextEntityId += 1;
             _entities.Add(entity.Id, entity);
+            _nextEntityId += 1;
             return entity;
         }
 

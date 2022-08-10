@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Text;
 
 namespace Minotaur
 {
@@ -15,7 +13,7 @@ namespace Minotaur
         void Delete();
     }
 
-    public class BackingEntity : Poolable, Entity
+    internal class BackingEntity : Poolable, Entity
     {
         public int Id { get; private set; }
 

@@ -1,23 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Text;
 
 namespace Minotaur
 {
     public class SystemManager<TGame>
     {
         private EntityComponentManager _entities;
-        private List<EntitySystem<TGame>> _entitySystems;
-        private List<GameSystem<TGame>> _gameSystems;
-
         private TGame _game;
+        private List<EntitySystem<TGame>> _entitySystems = new List<EntitySystem<TGame>>();
+        private List<GameSystem<TGame>> _gameSystems = new List<GameSystem<TGame>>();
 
         public SystemManager(EntityComponentManager entities, TGame game)
         {
             _entities = entities;
-            _entitySystems = new List<EntitySystem<TGame>>();
-            _gameSystems = new List<GameSystem<TGame>>();
             _game = game;
         }
 

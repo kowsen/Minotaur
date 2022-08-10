@@ -1,20 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Minotaur
 {
     public class World<TGame>
     {
-        protected Dictionary<string, Scene<TGame>> _scenes;
+        protected Dictionary<string, Scene<TGame>> _scenes = new Dictionary<string, Scene<TGame>>();
         private Scene<TGame> _activeScene;
 
-        protected TGame _game;
+        private TGame _game;
 
-        // Game represents a global game object we want available to all our scenes and systems.
         public World(TGame game)
         {
-            _scenes = new Dictionary<string, Scene<TGame>>();
             _game = game;
         }
 
@@ -42,10 +39,7 @@ namespace Minotaur
             {
                 scene.Value.Initialize();
             }
-            InitializeListeners();
         }
-
-        public virtual void InitializeListeners() { }
 
         public void Switch(string key)
         {

@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Text;
-using Minotaur;
 
 namespace Minotaur
 {
@@ -14,7 +12,7 @@ namespace Minotaur
         void RemoveComponentFromAll<TComponent>() where TComponent : Component;
     }
 
-    public class BackingEntitySet : EntitySet
+    internal class BackingEntitySet : EntitySet
     {
         public int Count
         {
@@ -42,12 +40,6 @@ namespace Minotaur
 
         public void RemoveComponentFromAll<TComponent>() where TComponent : Component
         {
-            if (!_signature.IsTypeInRequirements(typeof(TComponent)))
-            {
-                throw new Exception(
-                    "Trying to remove non-required component from all in EntitySet"
-                );
-            }
             foreach (var entity in _entities)
             {
                 entity.RemoveComponent<TComponent>();
