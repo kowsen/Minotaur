@@ -4,25 +4,9 @@ using System.Text;
 
 namespace Minotaur
 {
-    public abstract class EntitySystem<TGame>
+    public abstract class EntitySystem<TGame> : System<TGame>
     {
         public Signature Signature = new Signature();
-        protected TGame _game;
-        protected EntityComponentManager _entities;
-        protected ErrandManager<TGame> _errands;
-
-        public void Attach(TGame game, EntityComponentManager ecm, ErrandManager<TGame> errands)
-        {
-            _game = game;
-            _entities = ecm;
-            _errands = errands;
-        }
-
-        public virtual void Initialize() { }
-
-        public virtual void OnActivate() { }
-
-        public virtual void OnDeactivate() { }
 
         public virtual void Update(TimeSpan time, Entity entity) { }
 
@@ -33,17 +17,22 @@ namespace Minotaur
         public virtual void Draw(TimeSpan time, EntitySet entities) { }
     }
 
-    public abstract class GameSystem<TGame>
+    public abstract class GameSystem<TGame> : System<TGame>
     {
-        protected TGame Game;
-        protected EntityComponentManager Entities;
-        protected ErrandManager<TGame> Errands;
+        public virtual void Update(TimeSpan time) { }
 
-        public void Attach(TGame game, EntityComponentManager ecm, ErrandManager<TGame> errands)
+        public virtual void Draw(TimeSpan time) { }
+    }
+
+    public abstract class System<TGame>
+    {
+        public TGame Game { get; private set; }
+        public EntityComponentManager Entities { get; private set; }
+
+        public void Attach(TGame game, EntityComponentManager entities)
         {
             Game = game;
-            Entities = ecm;
-            Errands = errands;
+            Entities = entities;
         }
 
         public virtual void Initialize() { }
@@ -51,9 +40,5 @@ namespace Minotaur
         public virtual void OnActivate() { }
 
         public virtual void OnDeactivate() { }
-
-        public virtual void Update(TimeSpan time) { }
-
-        public virtual void Draw(TimeSpan time) { }
     }
 }

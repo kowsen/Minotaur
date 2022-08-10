@@ -23,21 +23,21 @@ namespace SampleLogic.Systems
             movement.DX = 0;
             movement.DY = 0;
 
-            if (_game.Input.IsUp)
+            if (Game.Input.IsUp)
             {
-                movement.DY -= _game.State.PlayerSpeed;
+                movement.DY -= Game.State.PlayerSpeed;
             }
-            if (_game.Input.IsRight)
+            if (Game.Input.IsRight)
             {
-                movement.DX += _game.State.PlayerSpeed;
+                movement.DX += Game.State.PlayerSpeed;
             }
-            if (_game.Input.IsDown)
+            if (Game.Input.IsDown)
             {
-                movement.DY += _game.State.PlayerSpeed;
+                movement.DY += Game.State.PlayerSpeed;
             }
-            if (_game.Input.IsLeft)
+            if (Game.Input.IsLeft)
             {
-                movement.DX -= _game.State.PlayerSpeed;
+                movement.DX -= Game.State.PlayerSpeed;
             }
         }
     }

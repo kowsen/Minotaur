@@ -7,17 +7,15 @@ namespace Minotaur
 {
     public class SystemManager<TGame>
     {
-        private EntityComponentManager _ecs;
-        private ErrandManager<TGame> _errands;
+        private EntityComponentManager _entities;
         private List<EntitySystem<TGame>> _entitySystems;
         private List<GameSystem<TGame>> _gameSystems;
 
         private TGame _game;
 
-        public SystemManager(EntityComponentManager ecs, ErrandManager<TGame> errands, TGame game)
+        public SystemManager(EntityComponentManager entities, TGame game)
         {
-            _ecs = ecs;
-            _errands = errands;
+            _entities = entities;
             _entitySystems = new List<EntitySystem<TGame>>();
             _gameSystems = new List<GameSystem<TGame>>();
             _game = game;
@@ -25,14 +23,14 @@ namespace Minotaur
 
         public void AddSystem(EntitySystem<TGame> system)
         {
-            system.Attach(_game, _ecs, _errands);
+            system.Attach(_game, _entities);
             _entitySystems.Add(system);
             system.Initialize();
         }
 
         public void AddSystem(GameSystem<TGame> system)
         {
-            system.Attach(_game, _ecs, _errands);
+            system.Attach(_game, _entities);
             _gameSystems.Add(system);
             system.Initialize();
         }
@@ -67,7 +65,7 @@ namespace Minotaur
         {
             foreach (var entitySystem in _entitySystems)
             {
-                var entitySet = _ecs.Get(entitySystem.Signature);
+                var entitySet = _entities.Get(entitySystem.Signature);
                 if (entitySet.Count > 0)
                 {
                     entitySystem.Update(time, entitySet);
@@ -83,14 +81,14 @@ namespace Minotaur
                 gameSystem.Update(time);
             }
 
-            _ecs.CommitChanges();
+            _entities.CommitChanges();
         }
 
         public void Draw(TimeSpan time)
         {
             foreach (var entitySystem in _entitySystems)
             {
-                var entitySet = _ecs.Get(entitySystem.Signature);
+                var entitySet = _entities.Get(entitySystem.Signature);
                 if (entitySet.Count > 0)
                 {
                     entitySystem.Draw(time, entitySet);

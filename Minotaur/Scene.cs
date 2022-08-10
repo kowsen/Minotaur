@@ -8,7 +8,6 @@ namespace Minotaur
     {
         protected EntityComponentManager _entities;
         protected SystemManager<TGame> _systems;
-        protected ErrandManager<TGame> _errands;
         protected TGame _game;
 
         public virtual void Attach(TGame game)
@@ -33,7 +32,6 @@ namespace Minotaur
 
         public void Reset()
         {
-            _errands.Clear();
             ResetECS();
             Initialize();
         }
@@ -41,21 +39,17 @@ namespace Minotaur
         private void ResetECS()
         {
             _entities = new EntityComponentManager();
-            _errands = new ErrandManager<TGame>(_entities, _game);
-            _systems = new SystemManager<TGame>(_entities, _errands, _game);
+            _systems = new SystemManager<TGame>(_entities, _game);
         }
 
         public void Update(TimeSpan time)
         {
             _systems.Update(time);
-            _errands.Update(time);
         }
 
         public void Draw(TimeSpan time)
         {
-            _errands.Draw(time, Errand<TGame>.DrawStatus.BEFORE);
             _systems.Draw(time);
-            _errands.Draw(time, Errand<TGame>.DrawStatus.AFTER);
         }
     }
 }
