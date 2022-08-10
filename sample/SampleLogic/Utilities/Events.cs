@@ -1,23 +1,35 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Minotaur;
 
 namespace SampleLogic.Utilities
 {
-    public class BounceEvent : IEvent
+    public class EventWithArgs<TArgs>
     {
-        public int Id { get; set; }
+        public delegate void EventWithArgsHandler(TArgs args);
 
-        public BounceEvent(int id)
+        public event EventWithArgsHandler Event;
+
+        public void Emit(TArgs args)
         {
-            Id = id;
+            Event?.Invoke(args);
         }
     }
 
-    public class SpacePressEvent : IEvent { }
+    public class EventWithoutArgs
+    {
+        public delegate void EventWithoutArgsHandler();
 
-    public class StartEvent : IEvent { }
+        public event EventWithoutArgsHandler Event;
+
+        public void Emit()
+        {
+            Event?.Invoke();
+        }
+    }
+
+    public class EventBus
+    {
+        public EventWithArgs<int> Bounce = new EventWithArgs<int>();
+        public EventWithoutArgs SpacePress = new EventWithoutArgs();
+        public EventWithoutArgs Start = new EventWithoutArgs();
+    }
 }

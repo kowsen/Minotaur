@@ -46,7 +46,7 @@ namespace SampleLogic.Systems
 
             if (didBounce)
             {
-                Game.Bus.Notify(new BounceEvent(entity.Id));
+                Game.Bus.Bounce.Emit(entity.Id);
             }
 
             position.X += movement.DX;

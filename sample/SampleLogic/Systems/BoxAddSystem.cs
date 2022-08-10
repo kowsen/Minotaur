@@ -24,15 +24,15 @@ namespace SampleLogic.Systems
 
         public override void OnActivate()
         {
-            Game.Bus.Register<SpacePressEvent>(AddBox);
+            Game.Bus.SpacePress.Event += AddBox;
         }
 
         public override void OnDeactivate()
         {
-            Game.Bus.Remove<SpacePressEvent>(AddBox);
+            Game.Bus.SpacePress.Event -= AddBox;
         }
 
-        private void AddBox(SpacePressEvent spacePressEvent)
+        private void AddBox()
         {
             var boxEntity = Entities.Create();
             boxEntity
