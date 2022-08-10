@@ -4,17 +4,12 @@ using System.Collections.Concurrent;
 
 namespace Minotaur
 {
-    public abstract class Poolable
+    internal interface Poolable
     {
-        public Poolable()
-        {
-            Reset();
-        }
-
-        public abstract void Reset();
+        void Reset();
     }
 
-    public static class Pool
+    internal static class Pool
     {
         private static Dictionary<Type, Action<Poolable>> _recycleActions =
             new Dictionary<Type, Action<Poolable>>();
@@ -37,7 +32,7 @@ namespace Minotaur
         }
     }
 
-    public static class Pool<TPoolable> where TPoolable : Poolable, new()
+    internal static class Pool<TPoolable> where TPoolable : class, Poolable, new()
     {
         static Pool()
         {
@@ -61,6 +56,11 @@ namespace Minotaur
         {
             item.Reset();
             _pool.Add(item);
+        }
+
+        public static int GetCount()
+        {
+            return _pool.Count;
         }
 
         private static void TryRecycle(Poolable item)

@@ -78,7 +78,7 @@ namespace Minotaur
             return Id.GetHashCode();
         }
 
-        public override void Reset()
+        public void Reset()
         {
             Id = -1;
             _markedForDelete = false;
