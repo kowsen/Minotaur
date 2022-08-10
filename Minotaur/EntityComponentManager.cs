@@ -6,13 +6,13 @@ namespace Minotaur
     public class EntityComponentManager
     {
         private Dictionary<int, BackingEntity> _entities;
-        private Dictionary<Signature, EntitySet> _entitySets;
+        private Dictionary<Signature, BackingEntitySet> _entitySets;
         private int _nextEntityId = 0;
 
         public EntityComponentManager()
         {
             _entities = new Dictionary<int, BackingEntity>();
-            _entitySets = new Dictionary<Signature, EntitySet>();
+            _entitySets = new Dictionary<Signature, BackingEntitySet>();
         }
 
         public Entity Create()
@@ -31,20 +31,9 @@ namespace Minotaur
                 var didComponentsChange = entity.CommitComponentChanges();
                 if (didComponentsChange)
                 {
-                    foreach (var pair in _entitySets)
+                    foreach (var entitySet in _entitySets.Values)
                     {
-                        var signature = pair.Key;
-                        var entitySet = pair.Value;
-
-                        if (signature.Check(entity) && !entitySet.Entities.Contains(entity))
-                        {
-                            entitySet.Entities.Add(entity);
-                        }
-
-                        if (!signature.Check(entity) && entitySet.Entities.Contains(entity))
-                        {
-                            entitySet.Entities.Remove(entity);
-                        }
+                        entitySet.CheckAndAddOrRemoveEntity(entity);
                     }
                 }
 
@@ -53,10 +42,7 @@ namespace Minotaur
                 {
                     foreach (var entitySet in _entitySets.Values)
                     {
-                        if (entitySet.Entities.Contains(entity))
-                        {
-                            entitySet.Entities.Remove(entity);
-                        }
+                        entitySet.RemoveEntity(entity);
                     }
                     _entities.Remove(entity.Id);
                     Pool<BackingEntity>.Recycle(entity);
@@ -69,13 +55,10 @@ namespace Minotaur
             var success = _entitySets.TryGetValue(signature, out var entitySet);
             if (!success)
             {
-                entitySet = new EntitySet(signature, this);
+                entitySet = new BackingEntitySet(signature);
                 foreach (var entity in _entities.Values)
                 {
-                    if (signature.Check(entity))
-                    {
-                        entitySet.Entities.Add(entity);
-                    }
+                    entitySet.CheckAndAddOrRemoveEntity(entity);
                 }
                 _entitySets[signature] = entitySet;
             }

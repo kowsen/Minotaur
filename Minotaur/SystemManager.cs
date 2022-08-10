@@ -68,10 +68,10 @@ namespace Minotaur
             foreach (var entitySystem in _entitySystems)
             {
                 var entitySet = _ecs.Get(entitySystem.Signature);
-                if (entitySet.Entities.Count > 0)
+                if (entitySet.Count > 0)
                 {
                     entitySystem.Update(time, entitySet);
-                    foreach (var entity in entitySet.Entities)
+                    foreach (var entity in entitySet)
                     {
                         entitySystem.Update(time, entity);
                     }
@@ -91,10 +91,10 @@ namespace Minotaur
             foreach (var entitySystem in _entitySystems)
             {
                 var entitySet = _ecs.Get(entitySystem.Signature);
-                if (entitySet.Entities.Count > 0)
+                if (entitySet.Count > 0)
                 {
                     entitySystem.Draw(time, entitySet);
-                    foreach (var entity in entitySet.Entities)
+                    foreach (var entity in entitySet)
                     {
                         entitySystem.Draw(time, entity);
                     }

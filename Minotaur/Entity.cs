@@ -83,9 +83,6 @@ namespace Minotaur
         public override void Reset()
         {
             Id = -1;
-            _components.Clear();
-            _componentAddQueue.Clear();
-            _componentRemoveQueue.Clear();
             _markedForDelete = false;
         }
 
@@ -131,7 +128,9 @@ namespace Minotaur
                 {
                     Pool.Recycle(pair.Key, pair.Value);
                 }
-                Pool<BackingEntity>.Recycle(this);
+                _components.Clear();
+                _componentAddQueue.Clear();
+                _componentRemoveQueue.Clear();
 
                 return true;
             }
