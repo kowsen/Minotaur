@@ -13,7 +13,7 @@ namespace SampleLogic.Systems
     {
         public PlayerInputSystem()
         {
-            SetRequirements(typeof(MovementComponent), typeof(PlayerFlagComponent));
+            Signature.SetRequirements(typeof(MovementComponent), typeof(PlayerFlagComponent));
         }
 
         public override void Update(TimeSpan time, Entity entity)

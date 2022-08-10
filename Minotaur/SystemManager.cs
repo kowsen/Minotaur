@@ -83,7 +83,7 @@ namespace Minotaur
                 gameSystem.Update(time);
             }
 
-            _ecs.CommitComponentChanges();
+            _ecs.CommitChanges();
         }
 
         public void Draw(TimeSpan time)
