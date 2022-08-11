@@ -1,0 +1,34 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net472</TargetFramework>
+    <XunitConsole Condition=" '$(OS)' == 'Windows_NT' ">&quot;$(XunitConsole472Path)&quot;</XunitConsole>
+    <XunitConsole Condition=" '$(OS)' != 'Windows_NT' ">mono &quot;$(XunitConsole472Path)&quot;</XunitConsole>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference
+        Include="Microsoft.NETFramework.ReferenceAssemblies"
+        Version="1.0.0"
+        Condition=" '$(TargetFrameworkIdentifier)' == '.NETFramework' ">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="xunit" Version="2.4.1" />
+    <PackageReference Include="xunit.runner.console" Version="2.4.1">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Minotaur.Core\Minotaur.Core.csproj" />
+  </ItemGroup>
+
+  <Target Name="Test" DependsOnTargets="Build">
+    <Exec
+        Command="$(XunitConsole) $(TargetFileName)"
+        WorkingDirectory="$(TargetDir)" />
+  </Target>
+
+</Project>
