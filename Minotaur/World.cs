@@ -3,88 +3,50 @@ using System.Collections.Generic;
 
 namespace Minotaur
 {
-    public class World<TGame>
+    public abstract class World<TGame>
     {
-        protected Dictionary<string, Scene<TGame>> _scenes = new Dictionary<string, Scene<TGame>>();
-        private Scene<TGame> _activeScene;
-
-        private TGame _game;
+        public EntityComponentManager Entities { get; private set; }
+        public SystemManager<TGame> Systems { get; private set; }
+        public TGame Game { get; private set; }
 
         public World(TGame game)
         {
-            _game = game;
+            Game = game;
+            Reset();
         }
 
-        public void AddScene(string key, Scene<TGame> scene)
+        public virtual void Initialize() { }
+
+        public void Activate()
         {
-            if (_scenes.ContainsKey(key))
-            {
-                throw new Exception($"Trying to insert duplicate scene with key: {key}");
-            }
-            scene.Attach(_game);
-            _scenes[key] = scene;
+            Systems.ActivateSystems();
         }
 
-        public void LoadContent()
+        public void Deactivate()
         {
-            foreach (var scene in _scenes)
-            {
-                scene.Value.LoadContent();
-            }
+            Systems.DeactivateSystems();
         }
 
-        public void Initialize()
+        public void Reset()
         {
-            foreach (var scene in _scenes)
-            {
-                scene.Value.Initialize();
-            }
+            ResetECS();
+            Initialize();
         }
 
-        public void Switch(string key)
+        private void ResetECS()
         {
-            _activeScene?.Deactivate();
-            var success = _scenes.TryGetValue(key, out _activeScene);
-            if (!success)
-            {
-                throw new Exception($"Tried to change to nonexistent scene {key}");
-            }
-            _activeScene.Activate();
-        }
-
-        public void Reset(string key)
-        {
-            var success = _scenes.TryGetValue(key, out var scene);
-            if (!success)
-            {
-                throw new Exception($"Tried to reset nonexistent scene {key}");
-            }
-            if (scene == _activeScene)
-            {
-                scene.Deactivate();
-                scene.Reset();
-                scene.Activate();
-            }
-            else
-            {
-                scene.Reset();
-            }
+            Entities = new EntityComponentManager();
+            Systems = new SystemManager<TGame>(Entities, Game);
         }
 
         public void Update(TimeSpan time)
         {
-            if (_activeScene != null)
-            {
-                _activeScene.Update(time);
-            }
+            Systems.Update(time);
         }
 
         public void Draw(TimeSpan time)
         {
-            if (_activeScene != null)
-            {
-                _activeScene.Draw(time);
-            }
+            Systems.Draw(time);
         }
     }
 }
