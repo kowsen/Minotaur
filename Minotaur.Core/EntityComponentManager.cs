@@ -9,6 +9,8 @@ namespace Minotaur
             new Dictionary<Signature, BackingEntitySet>();
         private int _nextEntityId = 0;
 
+        private Queue<BackingEntity> _entitiesToRemoveAfterCommit = new Queue<BackingEntity>();
+
         public Entity Create()
         {
             var entity = Pool.Get<BackingEntity>();
@@ -38,9 +40,17 @@ namespace Minotaur
                     {
                         entitySet.RemoveEntity(entity);
                     }
-                    _entities.Remove(entity.Id);
-                    entity.Recycle();
+                    // We can't modify the entity map while iterating over it, so we build
+                    // a queue of entities to remove instead.
+                    _entitiesToRemoveAfterCommit.Enqueue(entity);
                 }
+            }
+
+            while (_entitiesToRemoveAfterCommit.Count > 0)
+            {
+                var entity = _entitiesToRemoveAfterCommit.Dequeue();
+                _entities.Remove(entity.Id);
+                entity.Recycle();
             }
         }
 

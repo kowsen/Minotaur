@@ -50,7 +50,7 @@ namespace Minotaur
                 );
             }
 
-            return component as TComponent;
+            return (TComponent)component;
         }
 
         public bool HasComponent<TComponent>() where TComponent : Component

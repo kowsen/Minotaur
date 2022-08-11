@@ -19,20 +19,15 @@ namespace Minotaur
         private static Dictionary<Type, ConcurrentBag<Poolable>> _pools =
             new Dictionary<Type, ConcurrentBag<Poolable>>();
 
-        public static int GetCount<TPoolable>() where TPoolable : Poolable
-        {
-            return GetPool(typeof(TPoolable)).Count;
-        }
-
         public static TPoolable Get<TPoolable>() where TPoolable : Poolable, new()
         {
-            var pool = GetPool(typeof(TPoolable)) as ConcurrentBag<TPoolable>;
+            var pool = GetPool(typeof(TPoolable));
             var poolHadItem = pool.TryTake(out var item);
             if (!poolHadItem)
             {
                 item = new TPoolable();
             }
-            return item;
+            return (TPoolable)item;
         }
 
         public static void Recycle(Poolable item)

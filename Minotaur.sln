@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Minotaur.Core", "Minotaur.C
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Minotaur.Test", "Minotaur.Test\Minotaur.Test.csproj", "{AEF9FF48-FEA3-47B3-AA3A-BE8AAF898674}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Minotaur.Sample", "Minotaur.Sample\Minotaur.Sample.csproj", "{93E2E08A-DEA7-4617-9D22-8BC1939B7CCB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +26,13 @@ Global
 		{AEF9FF48-FEA3-47B3-AA3A-BE8AAF898674}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AEF9FF48-FEA3-47B3-AA3A-BE8AAF898674}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AEF9FF48-FEA3-47B3-AA3A-BE8AAF898674}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D9A903F8-BA89-4A03-A47C-D1A3AB9300D4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D9A903F8-BA89-4A03-A47C-D1A3AB9300D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D9A903F8-BA89-4A03-A47C-D1A3AB9300D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D9A903F8-BA89-4A03-A47C-D1A3AB9300D4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{93E2E08A-DEA7-4617-9D22-8BC1939B7CCB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{93E2E08A-DEA7-4617-9D22-8BC1939B7CCB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{93E2E08A-DEA7-4617-9D22-8BC1939B7CCB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{93E2E08A-DEA7-4617-9D22-8BC1939B7CCB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

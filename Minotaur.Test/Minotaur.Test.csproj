@@ -2,15 +2,12 @@
 
   <PropertyGroup>
     <TargetFramework>net472</TargetFramework>
-    <XunitConsole Condition=" '$(OS)' == 'Windows_NT' ">&quot;$(XunitConsole472Path)&quot;</XunitConsole>
-    <XunitConsole Condition=" '$(OS)' != 'Windows_NT' ">mono &quot;$(XunitConsole472Path)&quot;</XunitConsole>
+    <XunitConsole Condition=" '$(OS)' == 'Windows_NT' ">"$(XunitConsole472Path)"</XunitConsole>
+    <XunitConsole Condition=" '$(OS)' != 'Windows_NT' ">mono "$(XunitConsole472Path)"</XunitConsole>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference
-        Include="Microsoft.NETFramework.ReferenceAssemblies"
-        Version="1.0.0"
-        Condition=" '$(TargetFrameworkIdentifier)' == '.NETFramework' ">
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.0" Condition=" '$(TargetFrameworkIdentifier)' == '.NETFramework' ">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
@@ -23,12 +20,11 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Minotaur.Core\Minotaur.Core.csproj" />
+    <ProjectReference Include="..\Minotaur.Sample\Minotaur.Sample.csproj" />
   </ItemGroup>
 
   <Target Name="Test" DependsOnTargets="Build">
-    <Exec
-        Command="$(XunitConsole) $(TargetFileName)"
-        WorkingDirectory="$(TargetDir)" />
+    <Exec Command="$(XunitConsole) $(TargetFileName)" WorkingDirectory="$(TargetDir)" />
   </Target>
 
 </Project>
