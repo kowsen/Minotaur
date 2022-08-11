@@ -4,77 +4,53 @@ using System.Collections.Concurrent;
 
 namespace Minotaur
 {
-    internal interface Poolable
+    public abstract class Poolable
     {
-        void Reset();
+        public abstract void Reset();
+
+        public void Recycle()
+        {
+            Pool.Recycle(this);
+        }
     }
 
     internal static class Pool
     {
-        private static Dictionary<Type, Action<Poolable>> _recycleActions =
-            new Dictionary<Type, Action<Poolable>>();
+        private static Dictionary<Type, ConcurrentBag<Poolable>> _pools =
+            new Dictionary<Type, ConcurrentBag<Poolable>>();
 
-        public static void RegisterRecycleAction(Type type, Action<Poolable> recycleAction)
+        public static int GetCount<TPoolable>() where TPoolable : Poolable
         {
-            _recycleActions.Add(type, recycleAction);
+            return GetPool(typeof(TPoolable)).Count;
         }
 
-        public static void Recycle(Type type, Poolable poolable)
+        public static TPoolable Get<TPoolable>() where TPoolable : Poolable, new()
         {
-            var success = _recycleActions.TryGetValue(type, out var recycleAction);
-            if (!success)
-            {
-                throw new Exception(
-                    $"Trying to recycle poolable of type {type} but pool is not registered"
-                );
-            }
-            recycleAction(poolable);
-        }
-    }
-
-    internal static class Pool<TPoolable> where TPoolable : class, Poolable, new()
-    {
-        static Pool()
-        {
-            Pool.RegisterRecycleAction(typeof(TPoolable), TryRecycle);
-        }
-
-        private static ConcurrentBag<TPoolable> _pool = new ConcurrentBag<TPoolable>();
-
-        public static TPoolable Get()
-        {
-            TPoolable item;
-            var didTake = _pool.TryTake(out item);
-            if (!didTake)
+            var pool = GetPool(typeof(TPoolable)) as ConcurrentBag<TPoolable>;
+            var poolHadItem = pool.TryTake(out var item);
+            if (!poolHadItem)
             {
                 item = new TPoolable();
             }
             return item;
         }
 
-        public static void Recycle(TPoolable item)
+        public static void Recycle(Poolable item)
         {
+            var pool = GetPool(item.GetType());
             item.Reset();
-            _pool.Add(item);
+            pool.Add(item);
         }
 
-        public static int GetCount()
+        private static ConcurrentBag<Poolable> GetPool(Type type)
         {
-            return _pool.Count;
-        }
-
-        private static void TryRecycle(Poolable item)
-        {
-            if (item is TPoolable)
+            var poolExists = _pools.TryGetValue(type, out var pool);
+            if (!poolExists)
             {
-                Recycle(item as TPoolable);
+                pool = new ConcurrentBag<Poolable>();
+                _pools.Add(type, pool);
             }
-            else
-            {
-                throw new Exception(
-                    $"Trying to recycle poolable of type {item.GetType()} in pool of type {typeof(TPoolable)}"
-                );
-            }
+            return pool;
         }
     }
 }

@@ -30,7 +30,7 @@ namespace Minotaur
 
         public TComponent AddComponent<TComponent>() where TComponent : Component, new()
         {
-            var component = Pool<TComponent>.Get();
+            var component = Pool.Get<TComponent>();
             _componentAddQueue.Enqueue(component);
             return component;
         }
@@ -78,7 +78,7 @@ namespace Minotaur
             return Id.GetHashCode();
         }
 
-        public void Reset()
+        public override void Reset()
         {
             Id = -1;
             _markedForDelete = false;
@@ -108,7 +108,7 @@ namespace Minotaur
                 var success = _components.TryGetValue(type, out var component);
                 if (success)
                 {
-                    Pool.Recycle(type, component);
+                    component.Recycle();
                     _components.Remove(type);
                 }
 
@@ -122,9 +122,9 @@ namespace Minotaur
         {
             if (_markedForDelete)
             {
-                foreach (var pair in _components)
+                foreach (var component in _components.Values)
                 {
-                    Pool.Recycle(pair.Key, pair.Value);
+                    component.Recycle();
                 }
                 _components.Clear();
                 _componentAddQueue.Clear();

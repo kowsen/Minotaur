@@ -11,7 +11,7 @@ namespace Minotaur
 
         public Entity Create()
         {
-            var entity = Pool<BackingEntity>.Get();
+            var entity = Pool.Get<BackingEntity>();
             entity.Init(_nextEntityId);
             _entities.Add(entity.Id, entity);
             _nextEntityId += 1;
@@ -39,7 +39,7 @@ namespace Minotaur
                         entitySet.RemoveEntity(entity);
                     }
                     _entities.Remove(entity.Id);
-                    Pool<BackingEntity>.Recycle(entity);
+                    entity.Recycle();
                 }
             }
         }
