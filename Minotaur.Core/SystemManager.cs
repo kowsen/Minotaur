@@ -30,29 +30,16 @@ namespace Minotaur
             system.Initialize();
         }
 
-        public void ActivateSystems()
+        public void CleanupSystems()
         {
             foreach (var entitySystem in _entitySystems)
             {
-                entitySystem.OnActivate();
+                entitySystem.Cleanup();
             }
 
             foreach (var gameSystem in _gameSystems)
             {
-                gameSystem.OnActivate();
-            }
-        }
-
-        public void DeactivateSystems()
-        {
-            foreach (var entitySystem in _entitySystems)
-            {
-                entitySystem.OnDeactivate();
-            }
-
-            foreach (var gameSystem in _gameSystems)
-            {
-                gameSystem.OnDeactivate();
+                gameSystem.Cleanup();
             }
         }
 
@@ -61,13 +48,10 @@ namespace Minotaur
             foreach (var entitySystem in _entitySystems)
             {
                 var entitySet = _entities.Get(entitySystem.Signature);
-                if (entitySet.Count > 0)
+                entitySystem.Update(time, entitySet);
+                foreach (var entity in entitySet)
                 {
-                    entitySystem.Update(time, entitySet);
-                    foreach (var entity in entitySet)
-                    {
-                        entitySystem.Update(time, entity);
-                    }
+                    entitySystem.Update(time, entity);
                 }
             }
 
@@ -84,13 +68,10 @@ namespace Minotaur
             foreach (var entitySystem in _entitySystems)
             {
                 var entitySet = _entities.Get(entitySystem.Signature);
-                if (entitySet.Count > 0)
+                entitySystem.Draw(time, entitySet);
+                foreach (var entity in entitySet)
                 {
-                    entitySystem.Draw(time, entitySet);
-                    foreach (var entity in entitySet)
-                    {
-                        entitySystem.Draw(time, entity);
-                    }
+                    entitySystem.Draw(time, entity);
                 }
             }
 

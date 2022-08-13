@@ -35,8 +35,6 @@ namespace Minotaur
 
         public virtual void Initialize() { }
 
-        public virtual void OnActivate() { }
-
-        public virtual void OnDeactivate() { }
+        public virtual void Cleanup() { }
     }
 }
