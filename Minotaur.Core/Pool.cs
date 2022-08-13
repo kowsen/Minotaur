@@ -9,7 +9,7 @@ namespace Minotaur
         public abstract void Reset();
     }
 
-    public class Pool
+    internal class Pool
     {
         private Dictionary<Type, ConcurrentBag<Poolable>> _pools =
             new Dictionary<Type, ConcurrentBag<Poolable>>();

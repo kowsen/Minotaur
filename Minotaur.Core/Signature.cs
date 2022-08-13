@@ -8,6 +8,12 @@ namespace Minotaur
         protected List<Type> _requirements = new List<Type>();
         protected List<Type> _restrictions = new List<Type>();
 
+        public Signature(List<Type> requirements = null, List<Type> restrictions = null)
+        {
+            _requirements = requirements ?? new List<Type>();
+            _restrictions = restrictions ?? new List<Type>();
+        }
+
         public void SetRequirements(params Type[] requirements)
         {
             _requirements = new List<Type>(requirements);

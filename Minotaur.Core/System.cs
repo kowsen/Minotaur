@@ -4,7 +4,7 @@ namespace Minotaur
 {
     public abstract class EntitySystem<TGame> : System<TGame>
     {
-        public Signature Signature = new Signature();
+        internal Signature Signature = new Signature();
 
         public virtual void Update(TimeSpan time, Entity entity) { }
 
@@ -27,7 +27,7 @@ namespace Minotaur
         public TGame Game { get; private set; }
         public EntityComponentManager Entities { get; private set; }
 
-        public void Attach(TGame game, EntityComponentManager entities)
+        internal void Attach(TGame game, EntityComponentManager entities)
         {
             Game = game;
             Entities = entities;

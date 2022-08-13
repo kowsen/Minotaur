@@ -21,7 +21,27 @@ namespace Minotaur
             return entity;
         }
 
-        public void CommitChanges()
+        public EntitySet Get(Signature signature)
+        {
+            var success = _entitySets.TryGetValue(signature, out var entitySet);
+            if (!success)
+            {
+                entitySet = new BackingEntitySet(signature);
+                foreach (var entity in _entities.Values)
+                {
+                    entitySet.CheckAndAddOrRemoveEntity(entity);
+                }
+                _entitySets[signature] = entitySet;
+            }
+            return entitySet;
+        }
+
+        public Entity GetById(int id)
+        {
+            return _entities[id];
+        }
+
+        internal void CommitChanges()
         {
             foreach (var entity in _entities.Values)
             {
@@ -53,26 +73,6 @@ namespace Minotaur
                 _entities.Remove(entity.Id);
                 _pool.Recycle(entity);
             }
-        }
-
-        public EntitySet Get(Signature signature)
-        {
-            var success = _entitySets.TryGetValue(signature, out var entitySet);
-            if (!success)
-            {
-                entitySet = new BackingEntitySet(signature);
-                foreach (var entity in _entities.Values)
-                {
-                    entitySet.CheckAndAddOrRemoveEntity(entity);
-                }
-                _entitySets[signature] = entitySet;
-            }
-            return entitySet;
-        }
-
-        public Entity GetById(int id)
-        {
-            return _entities[id];
         }
     }
 }
