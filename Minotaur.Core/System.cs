@@ -6,11 +6,7 @@ namespace Minotaur
     {
         internal Signature Signature = new Signature();
 
-        public virtual void Update(TimeSpan time, Entity entity) { }
-
         public virtual void Update(TimeSpan time, EntitySet entities) { }
-
-        public virtual void Draw(TimeSpan time, Entity entity) { }
 
         public virtual void Draw(TimeSpan time, EntitySet entities) { }
     }
@@ -33,8 +29,8 @@ namespace Minotaur
             Entities = entities;
         }
 
-        public virtual void Initialize() { }
+        public abstract void Initialize();
 
-        public virtual void Cleanup() { }
+        public abstract void Cleanup();
     }
 }

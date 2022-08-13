@@ -16,7 +16,7 @@ namespace Minotaur
             Game = game;
         }
 
-        public virtual void Initialize() { }
+        public abstract void Initialize();
 
         protected void AddSystem(EntitySystem<TGame> system)
         {
@@ -51,10 +51,6 @@ namespace Minotaur
             {
                 var entitySet = Entities.Get(entitySystem.Signature);
                 entitySystem.Update(time, entitySet);
-                foreach (var entity in entitySet)
-                {
-                    entitySystem.Update(time, entity);
-                }
             }
 
             foreach (var gameSystem in _gameSystems)
@@ -71,10 +67,6 @@ namespace Minotaur
             {
                 var entitySet = Entities.Get(entitySystem.Signature);
                 entitySystem.Draw(time, entitySet);
-                foreach (var entity in entitySet)
-                {
-                    entitySystem.Draw(time, entity);
-                }
             }
 
             foreach (var gameSystem in _gameSystems)

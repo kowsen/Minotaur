@@ -20,7 +20,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Minotaur.Core\Minotaur.Core.csproj" />
-    <ProjectReference Include="..\Minotaur.Sample\Minotaur.Sample.csproj" />
   </ItemGroup>
 
   <Target Name="Test" DependsOnTargets="Build">
