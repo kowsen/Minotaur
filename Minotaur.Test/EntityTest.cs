@@ -42,7 +42,5 @@ namespace Minotaur.Test
         // Add system tests that they are otherwise called in registration order
         // Add system tests that entity systems are called with all expected entities in both ways (with set and per entity)
         // Test Init + cleanup logic
-
-        // Add quick test that world calls all
     }
 }
