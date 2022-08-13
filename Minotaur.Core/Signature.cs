@@ -5,21 +5,37 @@ namespace Minotaur
 {
     public class Signature
     {
-        protected List<Type> _requirements = new List<Type>();
-        protected List<Type> _restrictions = new List<Type>();
-
-        public void SetRequirements(params Type[] requirements)
+        public bool IsEmpty
         {
-            _requirements = new List<Type>(requirements);
+            get => _requirements.Count == 0 && _restrictions.Count == 0;
         }
 
-        public void SetRestrictions(params Type[] restrictions)
+        private List<Type> _requirements = new List<Type>();
+        private List<Type> _restrictions = new List<Type>();
+
+        public Signature(List<Type> requirements = null, List<Type> restrictions = null)
         {
-            _restrictions = new List<Type>(restrictions);
+            _requirements = requirements;
+            _restrictions = restrictions;
+        }
+
+        public Signature WithRequirements(List<Type> requirements)
+        {
+            return new Signature(requirements, _restrictions);
+        }
+
+        public Signature WithRestrictions(List<Type> restrictions)
+        {
+            return new Signature(_requirements, restrictions);
         }
 
         internal bool Check(BackingEntity entity)
         {
+            if (IsEmpty)
+            {
+                return false;
+            }
+
             foreach (var requirement in _requirements)
             {
                 if (!entity.HasComponent(requirement))

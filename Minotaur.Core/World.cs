@@ -8,8 +8,7 @@ namespace Minotaur
         public EntityComponentManager Entities { get; private set; } = new EntityComponentManager();
         public TGame Game { get; private set; }
 
-        private List<EntitySystem<TGame>> _entitySystems = new List<EntitySystem<TGame>>();
-        private List<GameSystem<TGame>> _gameSystems = new List<GameSystem<TGame>>();
+        private List<System<TGame>> _systems = new List<System<TGame>>();
 
         public World(TGame game)
         {
@@ -18,44 +17,27 @@ namespace Minotaur
 
         public abstract void Initialize();
 
-        protected void AddSystem(EntitySystem<TGame> system)
+        protected void AddSystem(System<TGame> system)
         {
             system.Attach(Game, Entities);
-            _entitySystems.Add(system);
-            system.Initialize();
-        }
-
-        protected void AddSystem(GameSystem<TGame> system)
-        {
-            system.Attach(Game, Entities);
-            _gameSystems.Add(system);
+            _systems.Add(system);
             system.Initialize();
         }
 
         public void Cleanup()
         {
-            foreach (var entitySystem in _entitySystems)
+            foreach (var system in _systems)
             {
-                entitySystem.Cleanup();
-            }
-
-            foreach (var gameSystem in _gameSystems)
-            {
-                gameSystem.Cleanup();
+                system.Cleanup();
             }
         }
 
         public void Update(TimeSpan time)
         {
-            foreach (var entitySystem in _entitySystems)
+            foreach (var system in _systems)
             {
-                var entitySet = Entities.Get(entitySystem.Signature);
-                entitySystem.Update(time, entitySet);
-            }
-
-            foreach (var gameSystem in _gameSystems)
-            {
-                gameSystem.Update(time);
+                var entitySet = Entities.Get(system.Signature);
+                system.Update(time, entitySet);
             }
 
             Entities.CommitChanges();
@@ -63,15 +45,10 @@ namespace Minotaur
 
         public void Draw(TimeSpan time)
         {
-            foreach (var entitySystem in _entitySystems)
+            foreach (var system in _systems)
             {
-                var entitySet = Entities.Get(entitySystem.Signature);
-                entitySystem.Draw(time, entitySet);
-            }
-
-            foreach (var gameSystem in _gameSystems)
-            {
-                gameSystem.Draw(time);
+                var entitySet = Entities.Get(system.Signature);
+                system.Draw(time, entitySet);
             }
         }
     }
