@@ -8,13 +8,14 @@ namespace Minotaur
         private Dictionary<Signature, BackingEntitySet> _entitySets =
             new Dictionary<Signature, BackingEntitySet>();
         private int _nextEntityId = 0;
+        private Pool _pool = new Pool();
 
         private Queue<BackingEntity> _entitiesToRemoveAfterCommit = new Queue<BackingEntity>();
 
         public Entity Create()
         {
-            var entity = Pool.Get<BackingEntity>();
-            entity.Init(_nextEntityId);
+            var entity = _pool.Get<BackingEntity>();
+            entity.Init(_nextEntityId, _pool);
             _entities.Add(entity.Id, entity);
             _nextEntityId += 1;
             return entity;
@@ -50,7 +51,7 @@ namespace Minotaur
             {
                 var entity = _entitiesToRemoveAfterCommit.Dequeue();
                 _entities.Remove(entity.Id);
-                entity.Recycle();
+                _pool.Recycle(entity);
             }
         }
 

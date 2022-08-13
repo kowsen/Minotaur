@@ -22,15 +22,17 @@ namespace Minotaur
         private Queue<Component> _componentAddQueue = new Queue<Component>();
         private Queue<Type> _componentRemoveQueue = new Queue<Type>();
         private bool _markedForDelete = false;
+        private Pool _pool;
 
-        public void Init(int id)
+        public void Init(int id, Pool pool)
         {
             Id = id;
+            _pool = pool;
         }
 
         public TComponent AddComponent<TComponent>() where TComponent : Component, new()
         {
-            var component = Pool.Get<TComponent>();
+            var component = _pool.Get<TComponent>();
             _componentAddQueue.Enqueue(component);
             return component;
         }
@@ -108,7 +110,7 @@ namespace Minotaur
                 var success = _components.TryGetValue(type, out var component);
                 if (success)
                 {
-                    component.Recycle();
+                    _pool.Recycle(component);
                     _components.Remove(type);
                 }
 
@@ -124,7 +126,7 @@ namespace Minotaur
             {
                 foreach (var component in _components.Values)
                 {
-                    component.Recycle();
+                    _pool.Recycle(component);
                 }
                 _components.Clear();
                 _componentAddQueue.Clear();

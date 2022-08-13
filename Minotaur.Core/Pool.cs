@@ -7,19 +7,14 @@ namespace Minotaur
     public abstract class Poolable
     {
         public abstract void Reset();
-
-        public void Recycle()
-        {
-            Pool.Recycle(this);
-        }
     }
 
-    internal static class Pool
+    public class Pool
     {
-        private static Dictionary<Type, ConcurrentBag<Poolable>> _pools =
+        private Dictionary<Type, ConcurrentBag<Poolable>> _pools =
             new Dictionary<Type, ConcurrentBag<Poolable>>();
 
-        public static TPoolable Get<TPoolable>() where TPoolable : Poolable, new()
+        public TPoolable Get<TPoolable>() where TPoolable : Poolable, new()
         {
             var pool = GetPool(typeof(TPoolable));
             var poolHadItem = pool.TryTake(out var item);
@@ -30,14 +25,14 @@ namespace Minotaur
             return (TPoolable)item;
         }
 
-        public static void Recycle(Poolable item)
+        public void Recycle(Poolable item)
         {
             var pool = GetPool(item.GetType());
             item.Reset();
             pool.Add(item);
         }
 
-        private static ConcurrentBag<Poolable> GetPool(Type type)
+        private ConcurrentBag<Poolable> GetPool(Type type)
         {
             var poolExists = _pools.TryGetValue(type, out var pool);
             if (!poolExists)
