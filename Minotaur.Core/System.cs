@@ -7,7 +7,7 @@ namespace Minotaur
         public TGame Game { get; private set; }
         public EntityComponentManager Entities { get; private set; }
 
-        internal Signature Signature = new Signature();
+        public Signature Signature = new Signature();
 
         internal void Attach(TGame game, EntityComponentManager entities)
         {
