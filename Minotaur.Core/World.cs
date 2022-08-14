@@ -3,22 +3,26 @@ using System.Collections.Generic;
 
 namespace Minotaur
 {
-    public abstract class World<TGame>
+    public class World<TGame>
     {
         public EntityComponentManager Entities { get; private set; } = new EntityComponentManager();
         public TGame Game { get; private set; }
 
         private List<System<TGame>> _systems = new List<System<TGame>>();
+        private bool _hasStarted = false;
 
         public World(TGame game)
         {
             Game = game;
         }
 
-        public abstract void Initialize();
-
-        protected void AddSystem(System<TGame> system)
+        public void AddSystem<TSystem>() where TSystem : System<TGame>, new()
         {
+            if (_hasStarted)
+            {
+                throw new Exception("Cannot add systems after the first world update");
+            }
+            var system = new TSystem();
             system.Attach(Game, Entities);
             _systems.Add(system);
             system.Initialize();
@@ -34,6 +38,12 @@ namespace Minotaur
 
         public void Update(TimeSpan time)
         {
+            if (!_hasStarted)
+            {
+                Entities.CommitChanges();
+                _hasStarted = true;
+            }
+
             foreach (var system in _systems)
             {
                 var entitySet = Entities.Get(system.Signature);

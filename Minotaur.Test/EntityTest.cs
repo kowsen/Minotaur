@@ -86,6 +86,25 @@ namespace Minotaur.Test
         }
 
         [Fact]
+        public void TestSignatureEquality()
+        {
+            var sig1 = new Signature();
+            sig1.AddRequirement<RedComponent>();
+            sig1.AddRequirement<BlueComponent>();
+            sig1.AddRestriction<GreenComponent>();
+
+            var sig2 = new Signature();
+            sig2.AddRequirement<RedComponent>();
+
+            Assert.NotEqual(sig1, sig2);
+
+            var sig3 = new Signature();
+            sig3.AddRequirement<RedComponent>();
+
+            Assert.Equal(sig3, sig2);
+        }
+
+        [Fact]
         public void TestSimpleQuery()
         {
             var manager = new EntityComponentManager();

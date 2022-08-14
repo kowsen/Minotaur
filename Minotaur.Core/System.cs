@@ -1,16 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace Minotaur
 {
     public abstract class System<TGame>
     {
-        private static Signature _emptySignature = new Signature();
-
         public TGame Game { get; private set; }
         public EntityComponentManager Entities { get; private set; }
 
-        internal Signature Signature = _emptySignature;
+        internal Signature Signature = new Signature();
 
         internal void Attach(TGame game, EntityComponentManager entities)
         {
