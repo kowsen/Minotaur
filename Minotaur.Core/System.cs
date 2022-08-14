@@ -18,16 +18,6 @@ namespace Minotaur
             Entities = entities;
         }
 
-        public void SetEntityRequirements(params Type[] requirements)
-        {
-            Signature = Signature.WithRequirements(new List<Type>(requirements));
-        }
-
-        public void SetEntityRestrictions(params Type[] restrictions)
-        {
-            Signature = Signature.WithRestrictions(new List<Type>(restrictions));
-        }
-
         public abstract void Initialize();
 
         public abstract void Cleanup();

@@ -91,13 +91,13 @@ namespace Minotaur.Test
             var manager = new EntityComponentManager();
 
             var redSignature = new Signature();
-            redSignature.SetRequirements(typeof(RedComponent));
+            redSignature.AddRequirement<RedComponent>();
 
             var greenSignature = new Signature();
-            greenSignature.SetRequirements(typeof(GreenComponent));
+            greenSignature.AddRequirement<GreenComponent>();
 
             var blueSignature = new Signature();
-            blueSignature.SetRequirements(typeof(BlueComponent));
+            blueSignature.AddRequirement<BlueComponent>();
 
             var redEntity = manager.Create();
             redEntity.AddComponent<RedComponent>();
@@ -125,32 +125,33 @@ namespace Minotaur.Test
             var manager = new EntityComponentManager();
 
             var redSignature = new Signature();
-            redSignature.SetRequirements(typeof(RedComponent));
+            redSignature.AddRequirement<RedComponent>();
 
             var greenSignature = new Signature();
-            greenSignature.SetRequirements(typeof(GreenComponent));
+            greenSignature.AddRequirement<GreenComponent>();
 
             var blueSignature = new Signature();
-            blueSignature.SetRequirements(typeof(BlueComponent));
+            blueSignature.AddRequirement<BlueComponent>();
 
             var purpleSignature = new Signature();
-            purpleSignature.SetRequirements(typeof(RedComponent), typeof(BlueComponent));
-            purpleSignature.SetRestrictions(typeof(GreenComponent));
+            purpleSignature.AddRequirement<RedComponent>();
+            purpleSignature.AddRequirement<BlueComponent>();
+            purpleSignature.AddRestriction<GreenComponent>();
 
             var yellowSignature = new Signature();
-            yellowSignature.SetRequirements(typeof(RedComponent), typeof(GreenComponent));
-            yellowSignature.SetRestrictions(typeof(BlueComponent));
+            yellowSignature.AddRequirement<RedComponent>();
+            yellowSignature.AddRequirement<GreenComponent>();
+            yellowSignature.AddRestriction<BlueComponent>();
 
             var cyanSignature = new Signature();
-            cyanSignature.SetRequirements(typeof(GreenComponent), typeof(BlueComponent));
-            cyanSignature.SetRestrictions(typeof(RedComponent));
+            cyanSignature.AddRequirement<GreenComponent>();
+            cyanSignature.AddRequirement<BlueComponent>();
+            cyanSignature.AddRestriction<RedComponent>();
 
             var whiteSignature = new Signature();
-            whiteSignature.SetRequirements(
-                typeof(RedComponent),
-                typeof(GreenComponent),
-                typeof(BlueComponent)
-            );
+            whiteSignature.AddRequirement<RedComponent>();
+            whiteSignature.AddRequirement<GreenComponent>();
+            whiteSignature.AddRequirement<BlueComponent>();
 
             var purpleEntity = manager.Create();
             purpleEntity.AddComponent<RedComponent>();
@@ -216,10 +217,10 @@ namespace Minotaur.Test
             var manager = new EntityComponentManager();
 
             var redSignature = new Signature();
-            redSignature.SetRequirements(typeof(RedComponent));
+            redSignature.AddRequirement<RedComponent>();
 
             var blueSignature = new Signature();
-            blueSignature.SetRequirements(typeof(BlueComponent));
+            blueSignature.AddRequirement<BlueComponent>();
 
             var purpleEntity = manager.Create();
             purpleEntity.AddComponent<RedComponent>();
@@ -246,6 +247,31 @@ namespace Minotaur.Test
 
             Assert.Equal(1, purpleEntityFromBlue.GetComponent<RedComponent>().Counter);
             Assert.Equal(2, purpleEntityFromBlue.GetComponent<BlueComponent>().Counter);
+        }
+
+        [Fact]
+        public void TestReuseQueries()
+        {
+            var manager = new EntityComponentManager();
+
+            Assert.True(manager.Get(new Signature()) == manager.Get(new Signature()));
+
+            var purpleSignature = new Signature();
+            purpleSignature.AddRequirement<RedComponent>();
+            purpleSignature.AddRequirement<BlueComponent>();
+            purpleSignature.AddRestriction<GreenComponent>();
+
+            var containsPurpleSignature = new Signature();
+            containsPurpleSignature.AddRequirement<RedComponent>();
+            containsPurpleSignature.AddRequirement<BlueComponent>();
+
+            Assert.False(purpleSignature.Equals(containsPurpleSignature));
+            Assert.False(manager.Get(purpleSignature) == manager.Get(containsPurpleSignature));
+
+            containsPurpleSignature.AddRestriction<GreenComponent>();
+
+            Assert.True(purpleSignature.Equals(containsPurpleSignature));
+            Assert.True(manager.Get(purpleSignature) == manager.Get(containsPurpleSignature));
         }
     }
 }

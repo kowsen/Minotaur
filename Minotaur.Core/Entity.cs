@@ -17,10 +17,10 @@ namespace Minotaur
     {
         public int Id { get; private set; }
 
-        private Dictionary<Type, Component> _components = new Dictionary<Type, Component>();
+        private Dictionary<int, Component> _components = new Dictionary<int, Component>();
 
-        private Queue<Component> _componentAddQueue = new Queue<Component>();
-        private Queue<Type> _componentRemoveQueue = new Queue<Type>();
+        private Queue<ComponentAddInfo> _componentAddQueue = new Queue<ComponentAddInfo>();
+        private Queue<int> _componentRemoveQueue = new Queue<int>();
         private bool _markedForDelete = false;
         private Pool _pool;
 
@@ -33,22 +33,22 @@ namespace Minotaur
         public TComponent AddComponent<TComponent>() where TComponent : Component, new()
         {
             var component = _pool.Get<TComponent>();
-            _componentAddQueue.Enqueue(component);
+            _componentAddQueue.Enqueue(new ComponentAddInfo(component, TypeId<TComponent>.Get()));
             return component;
         }
 
         public void RemoveComponent<TComponent>() where TComponent : Component
         {
-            _componentRemoveQueue.Enqueue(typeof(TComponent));
+            _componentRemoveQueue.Enqueue(TypeId<TComponent>.Get());
         }
 
         public TComponent GetComponent<TComponent>() where TComponent : Component
         {
-            var success = _components.TryGetValue(typeof(TComponent), out var component);
+            var success = _components.TryGetValue(TypeId<TComponent>.Get(), out var component);
             if (!success)
             {
                 throw new Exception(
-                    $"Trying to get nonexistent component of type {typeof(TComponent)} from entity with id {Id}"
+                    $"Trying to get nonexistent component of type {TypeId<TComponent>.Get()} from entity with id {Id}"
                 );
             }
 
@@ -57,12 +57,12 @@ namespace Minotaur
 
         public bool HasComponent<TComponent>() where TComponent : Component
         {
-            return HasComponent(typeof(TComponent));
+            return HasComponent(TypeId<TComponent>.Get());
         }
 
-        public bool HasComponent(Type type)
+        public bool HasComponent(int typeId)
         {
-            return _components.ContainsKey(type);
+            return _components.ContainsKey(typeId);
         }
 
         public void Delete()
@@ -92,14 +92,14 @@ namespace Minotaur
 
             while (_componentAddQueue.Count > 0)
             {
-                var component = _componentAddQueue.Dequeue();
-                if (_components.ContainsKey(component.GetType()))
+                var addInfo = _componentAddQueue.Dequeue();
+                if (_components.ContainsKey(addInfo.TypeId))
                 {
                     throw new Exception(
-                        $"Inserting duplicate component of type {component.GetType()} into entity with id {Id}"
+                        $"Inserting duplicate component of type {addInfo.TypeId} into entity with id {Id}"
                     );
                 }
-                _components.Add(component.GetType(), component);
+                _components.Add(addInfo.TypeId, addInfo.Component);
 
                 didChange = true;
             }
@@ -136,6 +136,18 @@ namespace Minotaur
             }
 
             return false;
+        }
+
+        private struct ComponentAddInfo
+        {
+            public Component Component;
+            public int TypeId;
+
+            public ComponentAddInfo(Component component, int typeId)
+            {
+                Component = component;
+                TypeId = typeId;
+            }
         }
     }
 }

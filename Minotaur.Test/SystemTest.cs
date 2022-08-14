@@ -5,18 +5,29 @@ namespace Minotaur.Test
 {
     public class SystemTest
     {
-        class MockEntitySystem
-        {
-            public int InitializeCalls;
+        // class MockEntitySystem : EntitySystem<object>
+        // {
+        //     public int InitializeCalls;
+        //     public int CleanupCalls;
 
-            public override void Initialize()
-            {
-                InitializeCalls += 1;
-            }
-        }
+        //     public override void Initialize()
+        //     {
+        //         InitializeCalls += 1;
+        //     }
 
-        [Fact]
-        public void TestEntityGenerationAndReuse() { }
+        //     public override void Cleanup()
+        //     {
+        //         CleanupCalls += 1;
+        //     }
+
+        //     public override void Up()
+        //     {
+        //         CleanupCalls += 1;
+        //     }
+        // }
+
+        // [Fact]
+        // public void TestEntityGenerationAndReuse() { }
     }
 }
 

@@ -3,39 +3,35 @@ using System.Collections.Generic;
 
 namespace Minotaur
 {
-    public class Signature
+    public class Signature : IEquatable<Signature>
     {
-        public bool IsEmpty
+        private List<int> _requirements = new List<int>();
+        private List<int> _restrictions = new List<int>();
+
+        private string _stringSignature = "";
+
+        public void AddRequirement<TComponent>() where TComponent : Component
         {
-            get => _requirements.Count == 0 && _restrictions.Count == 0;
+            var typeId = TypeId<TComponent>.Get();
+            if (!_requirements.Contains(typeId))
+            {
+                _requirements.Add(TypeId<TComponent>.Get());
+                UpdateStringSignature();
+            }
         }
 
-        private List<Type> _requirements = new List<Type>();
-        private List<Type> _restrictions = new List<Type>();
-
-        public Signature(List<Type> requirements = null, List<Type> restrictions = null)
+        public void AddRestriction<TComponent>() where TComponent : Component
         {
-            _requirements = requirements;
-            _restrictions = restrictions;
-        }
-
-        public Signature WithRequirements(List<Type> requirements)
-        {
-            return new Signature(requirements, _restrictions);
-        }
-
-        public Signature WithRestrictions(List<Type> restrictions)
-        {
-            return new Signature(_requirements, restrictions);
+            var typeId = TypeId<TComponent>.Get();
+            if (!_restrictions.Contains(typeId))
+            {
+                _restrictions.Add(TypeId<TComponent>.Get());
+                UpdateStringSignature();
+            }
         }
 
         internal bool Check(BackingEntity entity)
         {
-            if (IsEmpty)
-            {
-                return false;
-            }
-
             foreach (var requirement in _requirements)
             {
                 if (!entity.HasComponent(requirement))
@@ -53,6 +49,24 @@ namespace Minotaur
             }
 
             return true;
+        }
+
+        private void UpdateStringSignature()
+        {
+            _requirements.Sort();
+            _restrictions.Sort();
+            _stringSignature =
+                $"{String.Join(",", _requirements)}|{String.Join(",", _restrictions)}";
+        }
+
+        public bool Equals(Signature other)
+        {
+            return _stringSignature == other._stringSignature;
+        }
+
+        public override int GetHashCode()
+        {
+            return _stringSignature.GetHashCode();
         }
     }
 }
