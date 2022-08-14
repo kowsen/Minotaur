@@ -106,12 +106,12 @@ namespace Minotaur
 
             while (_componentRemoveQueue.Count > 0)
             {
-                var type = _componentRemoveQueue.Dequeue();
-                var success = _components.TryGetValue(type, out var component);
+                var typeId = _componentRemoveQueue.Dequeue();
+                var success = _components.TryGetValue(typeId, out var component);
                 if (success)
                 {
-                    _pool.Recycle(component);
-                    _components.Remove(type);
+                    _pool.Recycle(typeId, component);
+                    _components.Remove(typeId);
                 }
 
                 didChange = true;
@@ -124,9 +124,9 @@ namespace Minotaur
         {
             if (_markedForDelete)
             {
-                foreach (var component in _components.Values)
+                foreach (var item in _components)
                 {
-                    _pool.Recycle(component);
+                    _pool.Recycle(item.Key, item.Value);
                 }
                 _components.Clear();
                 _componentAddQueue.Clear();
